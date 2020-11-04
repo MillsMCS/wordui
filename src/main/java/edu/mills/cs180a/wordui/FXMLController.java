@@ -115,19 +115,23 @@ public class FXMLController implements Initializable {
     private void configureButtons() {
         // Disable the Remove button if nothing is selected in the ListView control.
         removeButton.disableProperty()
-                .bind(listView.getSelectionModel().selectedItemProperty().isNull());
+        .bind(listView.getSelectionModel().selectedItemProperty().isNull());
 
         // Disable the Update button if nothing is selected, no modifications have
         // been made, or any field is empty or invalid.
         updateButton.disableProperty()
-                .bind(listView.getSelectionModel().selectedItemProperty().isNull()
-                        .or(modifiedProperty.not())
-                        .or(freqValidProperty.not())
-                        .or(wordTextField.textProperty().isEmpty())
-                        .or(definitionTextArea.textProperty().isEmpty()));
+        .bind(listView.getSelectionModel().selectedItemProperty().isNull()
+                .or(modifiedProperty.not())
+                .or(freqValidProperty.not())
+                .or(wordTextField.textProperty().isEmpty())
+                .or(definitionTextArea.textProperty().isEmpty()));
 
-        // TODO: Disable the Create button if an existing entry is selected or any
+        // Disable the Create button if an existing entry is selected or any
         // field is empty or invalid.
+        createButton.disableProperty()
+        .bind(listView.getSelectionModel().selectedItemProperty().isNotNull()
+                .or((wordTextField.textProperty().isEmpty()).and(definitionTextArea.textProperty().isEmpty()))
+                .or(freqValidProperty.not()));
     }
 
     // A frequency is valid if it is an integer and is at least 0.
@@ -144,7 +148,7 @@ public class FXMLController implements Initializable {
     private void addListeners() {
         listView.getSelectionModel().selectedItemProperty().addListener(wordRecordChangeListener);
         sortChoiceBox.getSelectionModel().selectedItemProperty()
-                .addListener(sortOrderChangeListener);
+        .addListener(sortOrderChangeListener);
     }
 
     @FXML
@@ -176,7 +180,7 @@ public class FXMLController implements Initializable {
         System.out.println("Update " + selectedWordRecord);
         WordRecord entry = listView.getSelectionModel().getSelectedItem();
         listView.getSelectionModel().selectedItemProperty()
-                .removeListener(wordRecordChangeListener);
+        .removeListener(wordRecordChangeListener);
         entry.setWord(wordTextField.getText());
         entry.setFrequency(Integer.parseInt(frequencyTextField.getText()));
         entry.setDefinition(definitionTextArea.getText());

@@ -126,7 +126,7 @@ public class FXMLController implements Initializable {
                         .or(wordTextField.textProperty().isEmpty())
                         .or(definitionTextArea.textProperty().isEmpty()));
 
-        // TODO: Disable the Create button if an existing entry is selected or any
+        // Disable the Create button if an existing entry is selected or any
         // field is empty or invalid.
         createButton.disableProperty()
                 .bind(listView.getSelectionModel().selectedItemProperty().isNull()
@@ -138,7 +138,7 @@ public class FXMLController implements Initializable {
     // Does the word already exist in our list
     private Boolean getWordExists(String w) {
         for (WordRecord wr : wordRecordList) {
-            if (wr.getWord().equals(w.trim())) {
+            if (wr.getWord().equalsIgnoreCase(w.trim())) {
                 return true;
             }
         }

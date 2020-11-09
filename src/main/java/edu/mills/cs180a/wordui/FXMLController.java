@@ -44,6 +44,7 @@ public class FXMLController implements Initializable {
     private final ObservableList<WordRecord> wordRecordList = FXCollections.observableArrayList();
 
     private WordRecord selectedWordRecord;
+    private final BooleanProperty wordExistsProperty = new SimpleBooleanProperty(false);
     private final BooleanProperty modifiedProperty = new SimpleBooleanProperty(false);
     private final BooleanProperty freqValidProperty = new SimpleBooleanProperty(false);
     private ChangeListener<WordRecord> wordRecordChangeListener = new WordRecordChangeListener();
@@ -62,6 +63,7 @@ public class FXMLController implements Initializable {
             if (newValue != null) {
                 wordTextField.setText(selectedWordRecord.getWord());
                 frequencyTextField.setText(Integer.toString(selectedWordRecord.getFrequency()));
+                wordExistsProperty.set(getWordExists(newValue.getWord()));
                 freqValidProperty.set(isValidFrequency(frequencyTextField.textProperty()));
                 definitionTextArea.setText(selectedWordRecord.getDefinition());
             } else {
@@ -107,8 +109,7 @@ public class FXMLController implements Initializable {
 
 
     private void populateChoiceBox() {
-        sortChoiceBox.setItems(FXCollections.observableArrayList(
-                WordRecord.SortOrder.values()));
+        sortChoiceBox.setItems(FXCollections.observableArrayList(WordRecord.SortOrder.values()));
         sortChoiceBox.setValue(WordRecord.SortOrder.ALPHABETICALLY_FORWARD);
     }
 
@@ -121,18 +122,32 @@ public class FXMLController implements Initializable {
         // been made, or any field is empty or invalid.
         updateButton.disableProperty()
                 .bind(listView.getSelectionModel().selectedItemProperty().isNull()
-                        .or(modifiedProperty.not())
-                        .or(freqValidProperty.not())
+                        .or(modifiedProperty.not()).or(freqValidProperty.not())
                         .or(wordTextField.textProperty().isEmpty())
                         .or(definitionTextArea.textProperty().isEmpty()));
 
         // TODO: Disable the Create button if an existing entry is selected or any
         // field is empty or invalid.
+        createButton.disableProperty()
+                .bind(listView.getSelectionModel().selectedItemProperty().isNull()
+                        .or(wordExistsProperty).or(modifiedProperty.not())
+                        .or(freqValidProperty.not()).or(wordTextField.textProperty().isEmpty())
+                        .or(definitionTextArea.textProperty().isEmpty()));
     }
+
+    // Does the word already exist in our list
+    private Boolean getWordExists(String w) {
+        for (WordRecord wr : wordRecordList) {
+            if (wr.getWord().equals(w.trim())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     // A frequency is valid if it is an integer and is at least 0.
     private boolean isValidFrequency(StringProperty sp) {
-        System.out.println("isLegalFrequency(" + sp.get() + ")");
         try {
             int value = Integer.parseInt(sp.get());
             return value >= 0;
@@ -151,16 +166,14 @@ public class FXMLController implements Initializable {
     private void handleKeyAction(KeyEvent keyEvent) {
         modifiedProperty.set(true);
         freqValidProperty.set(isValidFrequency(frequencyTextField.textProperty()));
+        wordExistsProperty.set(getWordExists(wordTextField.getText()));
     }
 
     @FXML
     private void createButtonAction(ActionEvent actionEvent) {
         System.out.println("Create");
-        WordRecord wordRecord =
-                new WordRecord(
-                        wordTextField.getText(),
-                        Integer.parseInt(frequencyTextField.getText()),
-                        definitionTextArea.getText());
+        WordRecord wordRecord = new WordRecord(wordTextField.getText(),
+                Integer.parseInt(frequencyTextField.getText()), definitionTextArea.getText());
         wordRecordList.add(wordRecord);
         listView.getSelectionModel().select(wordRecord); // select the new item
     }

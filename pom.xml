@@ -24,7 +24,6 @@
 		<!-- Used as the 'Vendor' for JNLP generation -->
 		<name>Mills College Department of Mathematics and Computer Science</name>
 	</organization>
-
 	<repositories>
 		<repository>
 			<id>CS180A site</id>
@@ -53,6 +52,19 @@
 			<artifactId>lombok</artifactId>
 			<version>1.18.2</version>
 			<scope>provided</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>3.6.0</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.google.guava/guava-annotations -->
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava-annotations</artifactId>
+			<version>r03</version>
 		</dependency>
 	</dependencies>
 	<build>

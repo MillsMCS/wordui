@@ -3,6 +3,7 @@ package edu.mills.cs180a.wordui.model;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import com.google.common.annotations.VisibleForTesting;
 import edu.mills.cs180a.wordnik.client.ApiClientHelper;
 import edu.mills.cs180a.wordnik.client.api.WordApi;
 import edu.mills.cs180a.wordnik.client.api.WordsApi;
@@ -12,17 +13,16 @@ import edu.mills.cs180a.wordnik.client.model.WordOfTheDay;
 import javafx.collections.ObservableList;
 
 public class SampleData {
-    private static final String FREQ_COUNT_KEY = "count";
-    private static final String FREQ_YEAR_KEY = "year";
+    @VisibleForTesting
+    protected static final String FREQ_COUNT_KEY = "count";
+    @VisibleForTesting
+    protected static final String FREQ_YEAR_KEY = "year";
     private static final int FREQ_YEAR = 2012;
     private static ApiClient client; // set in fillSampleData()
 
-    // TODO: Move to spring-swagger-wordnik-client
-    private static int getFrequencyByYear(String word, int year) {
-        WordApi wordApi = client.buildClient(WordApi.class);
-        FrequencySummary freqSummary =
-                wordApi.getWordFrequency(word, "false", year, year);
-        List<Object> freqObjects = freqSummary.getFrequency();
+    @VisibleForTesting
+    protected static int getFrequencyFromSummary(FrequencySummary fs, int year) {
+        List<Object> freqObjects = fs.getFrequency();
         // freqObjects is a List<Map> [{"year" = "2012", "count" = 179}] for "Java"
 
         if (freqObjects instanceof List) {
@@ -40,13 +40,23 @@ public class SampleData {
                 }
             }
         }
+
         return 0;
+    }
+    // TODO: Move to spring-swagger-wordnik-client
+    @VisibleForTesting
+    protected static int getFrequencyByYear(WordApi wordApi, String word, int year) {
+        FrequencySummary freqSummary =
+                wordApi.getWordFrequency(word, "false", year, year);
+        return getFrequencyFromSummary(freqSummary, year);
     }
 
     private static WordRecord buildWordRecord(String word, Map<Object, Object> definition) {
+        //WordApi wordApi = client.buildClient(WordApi.class);//CAN DO THIS OOOOR
         return new WordRecord(
                 word,
-                getFrequencyByYear(word, FREQ_YEAR),
+                //getFrequencyByYear(wordApi, word, FREQ_YEAR),
+                getFrequencyByYear(client.buildClient(WordApi.class), word, FREQ_YEAR),
                 definition.get("text").toString());
     }
 

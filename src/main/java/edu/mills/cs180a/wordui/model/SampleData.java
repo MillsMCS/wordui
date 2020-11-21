@@ -57,11 +57,15 @@ public class SampleData {
                 definition.get("text").toString());
     }
 
+    /**
+     * 
+     * @param backingList is a list of words and their definition
+     */
     public static void fillSampleData(ObservableList<WordRecord> backingList) {
         try {
             client = ApiClientHelper.getApiClient();
             WordsApi wordsApi = client.buildClient(WordsApi.class);
-            WordOfTheDay word = wordsApi.getWordOfTheDay();
+            WordOfTheDay word = getWordOfTheDay(wordsApi);
             List<Object> definitions = word.getDefinitions();
             if (definitions != null && !definitions.isEmpty()) {
                 Object definition = definitions.get(0);
@@ -81,5 +85,9 @@ public class SampleData {
                 179, "An island of Indonesia in the Malay Archipelago"));
         backingList.add(new WordRecord("random",
                 794, "Having no specific pattern, purpose, or objective"));
+    }
+    
+    private static WordOfTheDay getWordOfTheDay(WordsApi wordsApi) {
+        return wordsApi.getWordOfTheDay();
     }
 }

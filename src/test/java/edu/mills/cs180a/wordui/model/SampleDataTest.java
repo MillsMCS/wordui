@@ -11,18 +11,28 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import edu.mills.cs180a.wordnik.client.api.WordApi;
+import edu.mills.cs180a.wordnik.client.api.WordsApi;
+import edu.mills.cs180a.wordnik.client.model.WordOfTheDay;
 import edu.mills.cs180a.wordnik.client.model.FrequencySummary;
+import edu.mills.cs180a.wordnik.client.model.Definition;
 
 class SampleDataTest {
     private final WordApi mockWordApi = mock(WordApi.class);
     private static final Map<String, FrequencySummary> FREQS_MAP = Map.of(
             "apple", makeFrequencySummary(List.of(makeMap(2000, 339), makeMap(2001, 464))),
             "orange", makeFrequencySummary(List.of(makeMap(2000, 774), makeMap(2001, 941))));
-
+    
+    private final WordsApi mockWordsApi = mock(WordsApi.class);
+    private final WordOfTheDay mockWordOfTheDay = mock(WordOfTheDay.class);
+    
+    private static final Map<String, Definition> WORD_MAP = Map.of();
+    
     @BeforeEach
     void setup() {
         when(mockWordApi.getWordFrequency(anyString(), anyString(), anyInt(), anyInt()))
                 .thenAnswer(invocation -> FREQS_MAP.get(invocation.getArgument(0)));
+        
+        //when(mockWordsApi.getWordOfTheDay(queryParams));
     }
 
     private static Map<Object, Object> makeMap(int year, int count) {

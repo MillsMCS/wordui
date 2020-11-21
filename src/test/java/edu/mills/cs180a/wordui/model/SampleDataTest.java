@@ -25,14 +25,17 @@ class SampleDataTest {
     private final WordsApi mockWordsApi = mock(WordsApi.class);
     private final WordOfTheDay mockWordOfTheDay = mock(WordOfTheDay.class);
     
-    private static final Map<String, Definition> WORD_MAP = Map.of();
+    private static final Map<String, WordsApi> WORD_MAP = Map.of(
+    		"other", makeWordsApi(makeWordOfTheDay("other")));
+    
+    //private static final WordsApi WORD = makeWordsApi(makeWordOfTheDay("other"));
     
     @BeforeEach
     void setup() {
         when(mockWordApi.getWordFrequency(anyString(), anyString(), anyInt(), anyInt()))
                 .thenAnswer(invocation -> FREQS_MAP.get(invocation.getArgument(0)));
         
-        //when(mockWordsApi.getWordOfTheDay(queryParams));
+        when(mockWordsApi.getWordOfTheDay()).thenAnswer(invocation -> WORD_MAP.get(invocation.getArgument(0)));
     }
 
     private static Map<Object, Object> makeMap(int year, int count) {
@@ -45,11 +48,30 @@ class SampleDataTest {
         when(fs.getFrequency()).thenReturn(freqs);
         return fs;
     }
+    
+    private static WordsApi makeWordsApi(WordOfTheDay w) {
+    	WordsApi wapi = mock(WordsApi.class);
+    	when(wapi.getWordOfTheDay()).thenReturn(w);
+    	return wapi;
+    }
+    
+    private static WordOfTheDay makeWordOfTheDay(String word) {
+    	WordOfTheDay wotd = mock(WordOfTheDay.class);
+    	wotd.setWord(word);
+    	return wotd;
+    }
 
     @ParameterizedTest
     @CsvSource({"apple,2000,339", "apple,2001,464", "apple,2020,0", "orange,2000,774",
             "orange,2001,941", "orange,2050,0"})
     void testGetFrequencyFromSummary(String word, int year, int count) {
         assertEquals(count, SampleData.getFrequencyByYear(mockWordApi, word, year));
+    }
+    
+    @ParameterizedTest
+    @CsvSource({"other"})
+    void testGetWordOfTheDay(String w) {
+    	System.out.println(SampleData.getWordOfTheDay(mockWordsApi).toString());
+        assertEquals(0, SampleData.getWordOfTheDay(mockWordsApi).toString().compareTo(w));
     }
 }

@@ -87,7 +87,8 @@ public class SampleData {
                 794, "Having no specific pattern, purpose, or objective"));
     }
     
-    private static WordOfTheDay getWordOfTheDay(WordsApi wordsApi) {
+    @VisibleForTesting
+    protected static WordOfTheDay getWordOfTheDay(WordsApi wordsApi) {
         return wordsApi.getWordOfTheDay();
     }
 }

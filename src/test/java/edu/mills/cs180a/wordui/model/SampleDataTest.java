@@ -11,18 +11,25 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import edu.mills.cs180a.wordnik.client.api.WordApi;
+import edu.mills.cs180a.wordnik.client.api.WordsApi;
 import edu.mills.cs180a.wordnik.client.model.FrequencySummary;
+import edu.mills.cs180a.wordnik.client.model.WordOfTheDay;
 
 class SampleDataTest {
     private final WordApi mockWordApi = mock(WordApi.class);
     private static final Map<String, FrequencySummary> FREQS_MAP = Map.of(
             "apple", makeFrequencySummary(List.of(makeMap(2000, 339), makeMap(2001, 464))),
             "orange", makeFrequencySummary(List.of(makeMap(2000, 774), makeMap(2001, 941))));
+    
+    private final WordsApi mockWordsApi = mock(WordsApi.class);
+    private static final WordOfTheDay WORD_TODAY = makeWordOfTheDay();
 
     @BeforeEach
     void setup() {
         when(mockWordApi.getWordFrequency(anyString(), anyString(), anyInt(), anyInt()))
                 .thenAnswer(invocation -> FREQS_MAP.get(invocation.getArgument(0)));
+        when(mockWordsApi.getWordOfTheDay())
+        		.thenReturn(WORD_TODAY);
     }
 
     private static Map<Object, Object> makeMap(int year, int count) {
@@ -35,11 +42,21 @@ class SampleDataTest {
         when(fs.getFrequency()).thenReturn(freqs);
         return fs;
     }
+    
+    private static WordOfTheDay makeWordOfTheDay() {
+    	WordOfTheDay wotd = mock(WordOfTheDay.class);
+    	when(wotd.getWord()).thenReturn("banana");
+    	return wotd;
+    }
 
     @ParameterizedTest
     @CsvSource({"apple,2000,339", "apple,2001,464", "apple,2020,0", "orange,2000,774",
             "orange,2001,941", "orange,2050,0"})
     void testGetFrequencyFromSummary(String word, int year, int count) {
         assertEquals(count, SampleData.getFrequencyByYear(mockWordApi, word, year));
+    }
+    
+    void testGetWordOfTheDay() {
+    	assertEquals("banana", SampleData.getWordOfTheDay(mockWordsApi));
     }
 }

@@ -41,6 +41,11 @@ public class SampleData {
         }
         return 0;
     }
+    
+    @VisibleForTesting
+    protected static WordOfTheDay getWordOfTheDay(WordsApi wordsApi) {
+    	return wordsApi.getWordOfTheDay();
+    }
 
     // TODO: Move to spring-swagger-wordnik-client
     @VisibleForTesting
@@ -61,7 +66,7 @@ public class SampleData {
         try {
             client = ApiClientHelper.getApiClient();
             WordsApi wordsApi = client.buildClient(WordsApi.class);
-            WordOfTheDay word = wordsApi.getWordOfTheDay();
+            WordOfTheDay word = getWordOfTheDay(wordsApi);
             List<Object> definitions = word.getDefinitions();
             if (definitions != null && !definitions.isEmpty()) {
                 Object definition = definitions.get(0);

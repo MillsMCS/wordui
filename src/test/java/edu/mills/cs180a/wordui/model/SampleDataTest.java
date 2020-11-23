@@ -25,17 +25,14 @@ class SampleDataTest {
     private final WordsApi mockWordsApi = mock(WordsApi.class);
     private final WordOfTheDay mockWordOfTheDay = mock(WordOfTheDay.class);
     
-    private static final Map<String, WordsApi> WORD_MAP = Map.of(
-    		"other", makeWordsApi(makeWordOfTheDay("other")));
-    
-    //private static final WordsApi WORD = makeWordsApi(makeWordOfTheDay("other"));
-    
+    private static final String WORD = "other";
+    private static final WordOfTheDay WOTD = makeWordOfTheDay(WORD);
+        
     @BeforeEach
     void setup() {
         when(mockWordApi.getWordFrequency(anyString(), anyString(), anyInt(), anyInt()))
-                .thenAnswer(invocation -> FREQS_MAP.get(invocation.getArgument(0)));
-        
-        when(mockWordsApi.getWordOfTheDay()).thenAnswer(invocation -> WORD_MAP.get(invocation.getArgument(0)));
+                .thenAnswer(invocation -> FREQS_MAP.get(invocation.getArgument(0)));        
+        when(mockWordsApi.getWordOfTheDay()).thenReturn(WOTD);
     }
 
     private static Map<Object, Object> makeMap(int year, int count) {
@@ -55,9 +52,9 @@ class SampleDataTest {
     	return wapi;
     }
     
-    private static WordOfTheDay makeWordOfTheDay(String word) {
+    private static WordOfTheDay makeWordOfTheDay(String w) {
     	WordOfTheDay wotd = mock(WordOfTheDay.class);
-    	wotd.setWord(word);
+    	when(wotd.getWord()).thenReturn(w);
     	return wotd;
     }
 
@@ -71,7 +68,8 @@ class SampleDataTest {
     @ParameterizedTest
     @CsvSource({"other"})
     void testGetWordOfTheDay(String w) {
-    	System.out.println(SampleData.getWordOfTheDay(mockWordsApi).toString());
-        assertEquals(0, SampleData.getWordOfTheDay(mockWordsApi).toString().compareTo(w));
+    	WordOfTheDay s = SampleData.getWordOfTheDay(mockWordsApi);
+    	System.out.println(s.getWord());
+        assertEquals(0, SampleData.getWordOfTheDay(mockWordsApi).getWord().compareTo(w));
     }
 }

@@ -18,7 +18,15 @@ public class SampleData {
     @VisibleForTesting
     protected static final String FREQ_YEAR_KEY = "year";
     private static final int FREQ_YEAR = 2012;
+    @VisibleForTesting
+    protected static final String WOD_WORD_KEY = "word";
+    @VisibleForTesting
+    protected static final String WOD_PUBLISHDATE_KEY = "publishDate";
     private static ApiClient client; // set in fillSampleData()
+
+    private static WordOfTheDay getWordOfTheDay(WordsApi wordsApi) {
+        return wordsApi.getWordOfTheDay();
+    }
 
     private static int getFrequencyFromSummary(FrequencySummary fs, int year) {
         List<Object> freqObjects = fs.getFrequency();
@@ -51,9 +59,7 @@ public class SampleData {
 
     private static WordRecord buildWordRecord(String word, Map<Object, Object> definition) {
         WordApi wordApi = client.buildClient(WordApi.class);
-        return new WordRecord(
-                word,
-                getFrequencyByYear(wordApi, word, FREQ_YEAR),
+        return new WordRecord(word, getFrequencyByYear(wordApi, word, FREQ_YEAR),
                 definition.get("text").toString());
     }
 
@@ -61,7 +67,7 @@ public class SampleData {
         try {
             client = ApiClientHelper.getApiClient();
             WordsApi wordsApi = client.buildClient(WordsApi.class);
-            WordOfTheDay word = wordsApi.getWordOfTheDay();
+            WordOfTheDay word = getWordOfTheDay(wordsApi);
             List<Object> definitions = word.getDefinitions();
             if (definitions != null && !definitions.isEmpty()) {
                 Object definition = definitions.get(0);
@@ -77,9 +83,9 @@ public class SampleData {
 
         backingList.add(new WordRecord("buffalo", 5153, "The North American bison."));
         backingList.add(new WordRecord("school", 23736, "A large group of aquatic animals."));
-        backingList.add(new WordRecord("Java",
-                179, "An island of Indonesia in the Malay Archipelago"));
-        backingList.add(new WordRecord("random",
-                794, "Having no specific pattern, purpose, or objective"));
+        backingList.add(
+                new WordRecord("Java", 179, "An island of Indonesia in the Malay Archipelago"));
+        backingList.add(
+                new WordRecord("random", 794, "Having no specific pattern, purpose, or objective"));
     }
 }

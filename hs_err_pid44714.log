@@ -1,0 +1,21 @@
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  SIGSEGV (0xb) at pc=0x00007fefcc6c2375, pid=44714, tid=44730
+#
+# JRE version: Java(TM) SE Runtime Environment (15.0.1+9) (build 15.0.1+9-18)
+# Java VM: Java HotSpot(TM) 64-Bit Server VM (15.0.1+9-18, mixed mode, sharing, tiered, compressed oops, g1 gc, linux-amd64)
+# Problematic frame:
+# C  [libjimage.so+0x4375]  ImageStrings::find(Endian*, char const*, int*, unsigned int)+0x65
+#
+# Core dump will be written. Default location: Core dumps may be processed with "/usr/share/apport/apport %p %s %c %d %P %E" (or dumping to /home/ben/CS280A-workspace/wordui/core.44714)
+#
+# If you would like to submit a bug report, please visit:
+#   https://bugreport.java.com/bugreport/crash.jsp
+#
+
+---------------  S U M M A R Y ------------
+
+Command Line: -XX:+ShowCodeDetailsInExceptionMessages -agentlib:jdwp=transport=dt_socket,suspend=y,address=localhost:38895 --module-path=/home/ben/openjfx-15.0.1_linux-x64_bin-sdk/javafx-sdk-15.0.1/lib --add-modules=javafx.controls,javafx.fxml -javaagent:/home/ben/eclipse/java-2020-06/eclipse/configuration/org.eclipse.osgi/537/0/.cp/lib/javaagent-shaded.jar -Dfile.encoding=UTF-8 edu.mills.cs180a.wordui.WordUI
+
+Host: 

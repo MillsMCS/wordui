@@ -125,9 +125,13 @@ public class FXMLController implements Initializable {
                         .or(freqValidProperty.not())
                         .or(wordTextField.textProperty().isEmpty())
                         .or(definitionTextArea.textProperty().isEmpty()));
-
         // TODO: Disable the Create button if an existing entry is selected or any
         // field is empty or invalid.
+        createButton.disableProperty()
+                .bind(listView.getSelectionModel().selectedItemProperty().isNotNull()
+                        .or(wordTextField.textProperty().isEmpty())
+                        .or(freqValidProperty.not())
+                        .or(definitionTextArea.textProperty().isEmpty()));
     }
 
     // A frequency is valid if it is an integer and is at least 0.

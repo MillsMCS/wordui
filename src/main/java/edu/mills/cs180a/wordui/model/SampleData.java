@@ -62,6 +62,13 @@ public class SampleData {
                 definition.get("text").toString());
     }
 
+    /***
+     * Creates a list of standard sample words and their definitions along
+     * with the word of the day. Implements the wordnik API.
+     * 
+     * @param backingList a list of sample word records
+     * @throws IOException if unable to get wordnik API key
+     */
     public static void fillSampleData(ObservableList<WordRecord> backingList) {
         try {
             client = ApiClientHelper.getApiClient();

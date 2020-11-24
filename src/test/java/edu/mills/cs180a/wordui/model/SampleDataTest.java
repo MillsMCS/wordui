@@ -5,6 +5,8 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +14,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import edu.mills.cs180a.wordnik.client.api.WordApi;
 import edu.mills.cs180a.wordnik.client.api.WordsApi;
+import edu.mills.cs180a.wordnik.client.model.Definition;
 import edu.mills.cs180a.wordnik.client.model.FrequencySummary;
 import edu.mills.cs180a.wordnik.client.model.WordOfTheDay;
 
@@ -45,7 +48,11 @@ class SampleDataTest {
     
     private static WordOfTheDay makeWordOfTheDay() {
     	WordOfTheDay wotd = mock(WordOfTheDay.class);
+    	List<Object> bananaDef = new LinkedList<>();
+    	bananaDef.add("An elongated curved fruit, which grows in bunches, and has a sweet creamy flesh and a smooth yellow skin.");
+    	
     	when(wotd.getWord()).thenReturn("banana");
+    	when(wotd.getDefinitions()).thenReturn(bananaDef);
     	return wotd;
     }
 
@@ -56,7 +63,12 @@ class SampleDataTest {
         assertEquals(count, SampleData.getFrequencyByYear(mockWordApi, word, year));
     }
     
-    void testGetWordOfTheDay() {
+    void getWordOfTheDay_True_mockedWord() {
     	assertEquals("banana", SampleData.getWordOfTheDay(mockWordsApi));
+    }
+    
+    void getDefinition_True_mockedDefinition() {
+    	assertEquals("An elongated curved fruit, which grows in bunches, and has a sweet creamy flesh and a smooth yellow skin.", 
+    	        SampleData.getWordOfTheDay(mockWordsApi).getDefinitions());
     }
 }

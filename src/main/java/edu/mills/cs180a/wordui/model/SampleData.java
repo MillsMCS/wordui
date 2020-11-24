@@ -43,6 +43,7 @@ public class SampleData {
 
         return 0;
     }
+
     // TODO: Move to spring-swagger-wordnik-client
     @VisibleForTesting
     protected static int getFrequencyByYear(WordApi wordApi, String word, int year) {
@@ -52,14 +53,20 @@ public class SampleData {
     }
 
     private static WordRecord buildWordRecord(String word, Map<Object, Object> definition) {
-        //WordApi wordApi = client.buildClient(WordApi.class);//CAN DO THIS OOOOR
+        // WordApi wordApi = client.buildClient(WordApi.class);//CAN DO THIS OOOOR
         return new WordRecord(
                 word,
-                //getFrequencyByYear(wordApi, word, FREQ_YEAR),
+                // getFrequencyByYear(wordApi, word, FREQ_YEAR),
                 getFrequencyByYear(client.buildClient(WordApi.class), word, FREQ_YEAR),
                 definition.get("text").toString());
     }
 
+    /**
+     * Builds a scene containing a predefined list of words with subsequent frequency count and
+     * definitions and a word of the day with defintions.
+     *
+     * @param backingList An empty list of WordRecords
+     */
     public static void fillSampleData(ObservableList<WordRecord> backingList) {
         try {
             client = ApiClientHelper.getApiClient();
@@ -84,5 +91,31 @@ public class SampleData {
                 179, "An island of Indonesia in the Malay Archipelago"));
         backingList.add(new WordRecord("random",
                 794, "Having no specific pattern, purpose, or objective"));
+    }
+
+
+    public static void fillSampleData(WordsApi wordsApi, ObservableList<WordRecord> backingList) {
+        WordOfTheDay word = getWordOfTheDay(wordsApi);
+        List<Object> definitions = word.getDefinitions();
+        if (definitions != null && !definitions.isEmpty()) {
+            Object definition = definitions.get(0);
+            if (definition instanceof Map) {
+                @SuppressWarnings("unchecked")
+                Map<Object, Object> definitionAsMap = (Map<Object, Object>) definition;
+                backingList.add(buildWordRecord(word.getWord(), definitionAsMap));
+            }
+        }
+
+        backingList.add(new WordRecord("buffalo", 5153, "The North American bison."));
+        backingList.add(new WordRecord("school", 23736, "A large group of aquatic animals."));
+        backingList.add(new WordRecord("Java",
+                179, "An island of Indonesia in the Malay Archipelago"));
+        backingList.add(new WordRecord("random",
+                794, "Having no specific pattern, purpose, or objective"));
+    }
+
+    @VisibleForTesting
+    protected static WordOfTheDay getWordOfTheDay(WordsApi wordsApi) {
+        return wordsApi.getWordOfTheDay();
     }
 }

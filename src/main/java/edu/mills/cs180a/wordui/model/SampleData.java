@@ -63,23 +63,7 @@ public class SampleData {
      * @param backingList the list of words and their definition
      */
     public static void fillSampleData(ObservableList<WordRecord> backingList) {
-        try {
-            client = ApiClientHelper.getApiClient();
-            WordsApi wordsApi = client.buildClient(WordsApi.class);
-            WordOfTheDay word = getWordOfTheDay(wordsApi);
-            List<Object> definitions = word.getDefinitions();
-            if (definitions != null && !definitions.isEmpty()) {
-                Object definition = definitions.get(0);
-                if (definition instanceof Map) {
-                    @SuppressWarnings("unchecked")
-                    Map<Object, Object> definitionAsMap = (Map<Object, Object>) definition;
-                    backingList.add(buildWordRecord(word.getWord(), definitionAsMap));
-                }
-            }
-        } catch (IOException e) {
-            System.err.println("Unable to get API key.");
-        }
-
+    	addWordOfTheDay(backingList);
         backingList.add(new WordRecord("buffalo", 5153, "The North American bison."));
         backingList.add(new WordRecord("school", 23736, "A large group of aquatic animals."));
         backingList.add(new WordRecord("Java",
@@ -88,7 +72,12 @@ public class SampleData {
                 794, "Having no specific pattern, purpose, or objective"));
     }
     
-    public static WordRecord addWordOfTheDay() {
+    /**
+     * Adds the word of the day to a list of WordRecord objects.
+     * 
+     * @param backingList the list of words and their definition
+     */
+    public static void addWordOfTheDay(ObservableList<WordRecord> backingList) {
         try {
             client = ApiClientHelper.getApiClient();
             WordsApi wordsApi = client.buildClient(WordsApi.class);

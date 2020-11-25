@@ -71,7 +71,7 @@ public class SampleData {
         try {
             client = ApiClientHelper.getApiClient();
             WordsApi wordsApi = client.buildClient(WordsApi.class);
-            WordOfTheDay word = wordsApi.getWordOfTheDay();
+            WordOfTheDay word = getWordOfTheDay(wordsApi);
             List<Object> definitions = word.getDefinitions();
             if (definitions != null && !definitions.isEmpty()) {
                 Object definition = definitions.get(0);
@@ -83,27 +83,6 @@ public class SampleData {
             }
         } catch (IOException e) {
             System.err.println("Unable to get API key.");
-        }
-
-        backingList.add(new WordRecord("buffalo", 5153, "The North American bison."));
-        backingList.add(new WordRecord("school", 23736, "A large group of aquatic animals."));
-        backingList.add(new WordRecord("Java",
-                179, "An island of Indonesia in the Malay Archipelago"));
-        backingList.add(new WordRecord("random",
-                794, "Having no specific pattern, purpose, or objective"));
-    }
-
-
-    public static void fillSampleData(WordsApi wordsApi, ObservableList<WordRecord> backingList) {
-        WordOfTheDay word = getWordOfTheDay(wordsApi);
-        List<Object> definitions = word.getDefinitions();
-        if (definitions != null && !definitions.isEmpty()) {
-            Object definition = definitions.get(0);
-            if (definition instanceof Map) {
-                @SuppressWarnings("unchecked")
-                Map<Object, Object> definitionAsMap = (Map<Object, Object>) definition;
-                backingList.add(buildWordRecord(word.getWord(), definitionAsMap));
-            }
         }
 
         backingList.add(new WordRecord("buffalo", 5153, "The North American bison."));

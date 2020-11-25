@@ -27,6 +27,7 @@ class SampleDataTest {
             Map.of("2020-11-22", makeWordOfTheDay("sneakbox"), "2019-11-22",
                     makeWordOfTheDay("ingesta"), "2018-11-22", makeWordOfTheDay("cocozelle"));
 
+
     @BeforeEach
     void setup() {
         when(mockWordApi.getWordFrequency(anyString(), anyString(), anyInt(), anyInt()))
@@ -47,7 +48,7 @@ class SampleDataTest {
     @ParameterizedTest
     @CsvSource({"apple,2000,339", "apple,2001,464", "apple,2020,0", "orange,2000,774",
             "orange,2001,941", "orange,2050,0"})
-    void getFrequencyFromSummarygetWord_correctValue_count(String word, int year, int count) {
+    void testGetFrequencyFromSummary(String word, int year, int count) {
         assertEquals(count, SampleData.getFrequencyByYear(mockWordApi, word, year));
     }
 

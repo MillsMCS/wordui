@@ -20,28 +20,17 @@ public class SampleData {
     @VisibleForTesting
     protected static final String FREQ_YEAR_KEY = "year";
     private static final int FREQ_YEAR = 2012;
-    private static ApiClient client; // set in fillSampleData()
+    private static ApiClient client;
 
 
     @VisibleForTesting
-    // テストから呼ばれる Frequency をGET ワードと年から
     protected static int getFrequencyByYear(WordApi wordApi, String word, int year) {
-
-        // APIでサイトからFrequencyをげっと
         FrequencySummary fs = wordApi.getWordFrequency(word, "false", year, year);
-
-        // FrequencySummary getWordFrequency(@Param("word") String word, @Param("useCanonical")
-        // String useCanonical, @Param("startYear") Integer startYear, @Param("endYear") Integer
-        // endYear);
-
-        //
         return getFrequencyFromSummary(fs, year);
     }
 
     private static int getFrequencyFromSummary(FrequencySummary fs, int year) {
         List<Object> freqObjects = fs.getFrequency();
-        // freqObjects is a List<Map> [{"year" = "2012", "count" = 179}] for "Java"
-
         if (freqObjects instanceof List) {
             List<Object> maps = (List<Object>) freqObjects;
             for (Object map : maps) {
@@ -76,12 +65,7 @@ public class SampleData {
             client = ApiClientHelper.getApiClient();
             WordsApi wordsApi = client.buildClient(WordsApi.class);
 
-            // Modify getWordOfTheDay
-            // WordOfTheDay word = wordsApi.getWordOfTheDay();
-
             WordOfTheDay word = getWordOfTheDay(wordsApi);
-
-            // 意味を取得
             List<Object> definitions = word.getDefinitions();
             if (definitions != null && !definitions.isEmpty()) {
                 Object definition = definitions.get(0);

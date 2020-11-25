@@ -32,16 +32,16 @@ class SampleDataTest {
     		"text", "An animal you take on walks.",
     		"note", "best note ever",
     		"PartOfSpeech", "noun");
-    private static final ArrayList<Map<String, String>> DEFINITIONS = makeDefinitions(DEFINITION);
+    private static final List<Object> DEFINITIONS = makeDefinitions(DEFINITION);
     private static final String WORD = "dog";
-    private static final WordOfTheDay WOTD = makeWordOfTheDay(WORD, DEFINITION);
+    private static final WordOfTheDay WOTD = makeWordOfTheDay(WORD, DEFINITIONS);
         
     @BeforeEach
     void setup() {
         when(mockWordApi.getWordFrequency(anyString(), anyString(), anyInt(), anyInt()))
                 .thenAnswer(invocation -> FREQS_MAP.get(invocation.getArgument(0)));
         when(mockWordsApi.getWordOfTheDay()).thenReturn(WOTD);
-    	when(mockWordOfTheDay.getDefinitions()).thenAnswer(invocation -> DEFINITION.get(invocation.getArgument(0)));
+        //when(mockWordOfTheDay.getDefinitions()).thenReturn(DEFINITIONS);
     }
 
     private static Map<Object, Object> makeMap(int year, int count) {
@@ -61,15 +61,15 @@ class SampleDataTest {
     	return wapi;
     }
     
-    private static WordOfTheDay makeWordOfTheDay(String w, Map<String, String> d) {
+    private static WordOfTheDay makeWordOfTheDay(String w, List<Object> d) {
     	WordOfTheDay wotd = mock(WordOfTheDay.class);
     	when(wotd.getWord()).thenReturn(w);
-    	when(wotd.getDefinitions()).thenAnswer(invocation -> d.get(invocation.getArgument(0)));
+    	when(wotd.getDefinitions()).thenReturn(d);
     	return wotd;
     }
     
-    private static ArrayList<Map<String, String>> makeDefinitions(Map<String, String> definition) {
-    	ArrayList<Map<String, String>> list = new ArrayList<Map<String, String>>();
+    private static List<Object> makeDefinitions(Map<String, String> definition) {
+    	List<Object> list = new ArrayList<Object>();
     	list.add(definition);
     	return list;
     }
@@ -85,14 +85,30 @@ class SampleDataTest {
     @CsvSource({"dog"})
     void testGetWordOfTheDay(String w) {
     	//System.out.println(SampleData.getWordOfTheDay(mockWordsApi).getWord());
-        assertEquals(0, SampleData.getWordOfTheDay(mockWordsApi).getWord().compareTo(w));
+    	WordOfTheDay wotd = SampleData.getWordOfTheDay(mockWordsApi);
+        assertEquals(0, wotd.getWord().compareTo(w));
     }
     
-    @ParameterizedTest
-    @CsvSource({"dog"})
-    void testGetDefinitions(String w) {
-    	WordOfTheDay wotd = makeWordOfTheDay(w, DEFINITION);
-    	System.out.println("Definition: " + wotd.getDefinitions().toString());
-    	assertEquals(0, wotd.getDefinitions());
+    
+    @SuppressWarnings("unchecked")
+	@ParameterizedTest
+    @CsvSource({
+    	"source, my dog", 
+    	"text, An animal you take on walks.", 
+    	"note, best note ever",
+		"PartOfSpeech, noun"})
+    void testGetDefinitions(String key, String value) {
+    	WordOfTheDay wotd = SampleData.getWordOfTheDay(mockWordsApi);
+    	
+    	// Debug
+    	try {
+    		System.out.println("Definition: " + ((Map<String, String>) wotd.getDefinitions().get(0)).get(key));
+    	} catch (Exception e) {
+    		System.out.println(e);
+    	}
+    	
+    	String returnValue = ( (Map<String, String>) wotd.getDefinitions().get(0) ).get(key);
+    	assertEquals(0, returnValue.compareTo(value));
     }
+    
 }

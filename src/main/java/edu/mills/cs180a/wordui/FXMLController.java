@@ -63,7 +63,7 @@ public class FXMLController implements Initializable {
             if (newValue != null) {
                 wordTextField.setText(selectedWordRecord.getWord());
                 frequencyTextField.setText(Integer.toString(selectedWordRecord.getFrequency()));
-                wordExistsProperty.set(getWordExists(newValue.getWord()));
+                wordExistsProperty.set(isNewWord(newValue.getWord()));
                 freqValidProperty.set(isValidFrequency(frequencyTextField.textProperty()));
                 definitionTextArea.setText(selectedWordRecord.getDefinition());
             } else {
@@ -130,19 +130,19 @@ public class FXMLController implements Initializable {
         // field is empty or invalid.
         createButton.disableProperty()
                 .bind(listView.getSelectionModel().selectedItemProperty().isNull()
-                        .or(wordExistsProperty).or(modifiedProperty.not())
+                        .or(wordExistsProperty.not()).or(modifiedProperty.not())
                         .or(freqValidProperty.not()).or(wordTextField.textProperty().isEmpty())
                         .or(definitionTextArea.textProperty().isEmpty()));
     }
 
     // Does the word already exist in our list
-    private Boolean getWordExists(String w) {
+    private boolean isNewWord(String w) {
         for (WordRecord wr : wordRecordList) {
             if (wr.getWord().equalsIgnoreCase(w.trim())) {
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
 
@@ -166,7 +166,7 @@ public class FXMLController implements Initializable {
     private void handleKeyAction(KeyEvent keyEvent) {
         modifiedProperty.set(true);
         freqValidProperty.set(isValidFrequency(frequencyTextField.textProperty()));
-        wordExistsProperty.set(getWordExists(wordTextField.getText()));
+        wordExistsProperty.set(isNewWord(wordTextField.getText()));
     }
 
     @FXML

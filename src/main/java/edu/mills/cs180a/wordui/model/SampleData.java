@@ -103,7 +103,6 @@ public class SampleData {
                 new WordRecord("random", 794, "Having no specific pattern, purpose, or objective"));
     }
 
-
     private static WordRecord buildWordRecord(String word, Map<Object, Object> definition) {
         WordApi wordApi = client.buildClient(WordApi.class);
         return new WordRecord(word, getFrequencyByYear(wordApi, word, FREQ_YEAR),

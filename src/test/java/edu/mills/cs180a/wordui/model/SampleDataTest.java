@@ -27,7 +27,6 @@ class SampleDataTest {
             Map.of("2020-11-22", makeWordOfTheDay("sneakbox"), "2019-11-22",
                     makeWordOfTheDay("ingesta"), "2018-11-22", makeWordOfTheDay("cocozelle"));
 
-
     @BeforeEach
     void setup() {
         when(mockWordApi.getWordFrequency(anyString(), anyString(), anyInt(), anyInt()))

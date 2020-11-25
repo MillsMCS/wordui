@@ -14,11 +14,29 @@ import javafx.collections.ObservableList;
 
 public class SampleData {
     @VisibleForTesting
+    protected static final String DATE_KEY = "date";
+    @VisibleForTesting
     protected static final String FREQ_COUNT_KEY = "count";
     @VisibleForTesting
     protected static final String FREQ_YEAR_KEY = "year";
     private static final int FREQ_YEAR = 2012;
     private static ApiClient client; // set in fillSampleData()
+
+
+    @VisibleForTesting
+    // テストから呼ばれる Frequency をGET ワードと年から
+    protected static int getFrequencyByYear(WordApi wordApi, String word, int year) {
+
+        // APIでサイトからFrequencyをげっと
+        FrequencySummary fs = wordApi.getWordFrequency(word, "false", year, year);
+
+        // FrequencySummary getWordFrequency(@Param("word") String word, @Param("useCanonical")
+        // String useCanonical, @Param("startYear") Integer startYear, @Param("endYear") Integer
+        // endYear);
+
+        //
+        return getFrequencyFromSummary(fs, year);
+    }
 
     private static int getFrequencyFromSummary(FrequencySummary fs, int year) {
         List<Object> freqObjects = fs.getFrequency();
@@ -42,26 +60,28 @@ public class SampleData {
         return 0;
     }
 
-    // TODO: Move to spring-swagger-wordnik-client
     @VisibleForTesting
-    protected static int getFrequencyByYear(WordApi wordApi, String word, int year) {
-        FrequencySummary fs = wordApi.getWordFrequency(word, "false", year, year);
-        return getFrequencyFromSummary(fs, year);
+    protected static String getWord(WordsApi wordsApi, String date) {
+        WordOfTheDay wd = wordsApi.getWordOfTheDay(date);
+        String word = wd.getWord();
+        return word;
     }
 
-    private static WordRecord buildWordRecord(String word, Map<Object, Object> definition) {
-        WordApi wordApi = client.buildClient(WordApi.class);
-        return new WordRecord(
-                word,
-                getFrequencyByYear(wordApi, word, FREQ_YEAR),
-                definition.get("text").toString());
+    protected static WordOfTheDay getWordOfTheDay(WordsApi WordsApi) {
+        return WordsApi.getWordOfTheDay();
     }
 
     public static void fillSampleData(ObservableList<WordRecord> backingList) {
         try {
             client = ApiClientHelper.getApiClient();
             WordsApi wordsApi = client.buildClient(WordsApi.class);
-            WordOfTheDay word = wordsApi.getWordOfTheDay();
+
+            // Modify getWordOfTheDay
+            // WordOfTheDay word = wordsApi.getWordOfTheDay();
+
+            WordOfTheDay word = getWordOfTheDay(wordsApi);
+
+            // 意味を取得
             List<Object> definitions = word.getDefinitions();
             if (definitions != null && !definitions.isEmpty()) {
                 Object definition = definitions.get(0);
@@ -77,9 +97,16 @@ public class SampleData {
 
         backingList.add(new WordRecord("buffalo", 5153, "The North American bison."));
         backingList.add(new WordRecord("school", 23736, "A large group of aquatic animals."));
-        backingList.add(new WordRecord("Java",
-                179, "An island of Indonesia in the Malay Archipelago"));
-        backingList.add(new WordRecord("random",
-                794, "Having no specific pattern, purpose, or objective"));
+        backingList.add(
+                new WordRecord("Java", 179, "An island of Indonesia in the Malay Archipelago"));
+        backingList.add(
+                new WordRecord("random", 794, "Having no specific pattern, purpose, or objective"));
+    }
+
+
+    private static WordRecord buildWordRecord(String word, Map<Object, Object> definition) {
+        WordApi wordApi = client.buildClient(WordApi.class);
+        return new WordRecord(word, getFrequencyByYear(wordApi, word, FREQ_YEAR),
+                definition.get("text").toString());
     }
 }

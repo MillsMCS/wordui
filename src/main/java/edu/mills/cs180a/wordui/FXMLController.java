@@ -65,6 +65,7 @@ public class FXMLController implements Initializable {
             modifiedProperty.set(false);
             if (newValue != null) {
                 wordTextField.setText(selectedWordRecord.getWord());
+
                 frequencyTextField.setText(Integer.toString(selectedWordRecord.getFrequency()));
                 freqValidProperty.set(isValidFrequency(frequencyTextField.textProperty()));
                 definitionTextArea.setText(selectedWordRecord.getDefinition());
@@ -114,8 +115,7 @@ public class FXMLController implements Initializable {
     }
 
     private void populateChoiceBox() {
-        sortChoiceBox.setItems(FXCollections.observableArrayList(
-                WordRecord.SortOrder.values()));
+        sortChoiceBox.setItems(FXCollections.observableArrayList(WordRecord.SortOrder.values()));
         sortChoiceBox.setValue(WordRecord.SortOrder.ALPHABETICALLY_FORWARD);
     }
 
@@ -128,8 +128,7 @@ public class FXMLController implements Initializable {
         // been made, or any field is empty or invalid.
         updateButton.disableProperty()
                 .bind(listView.getSelectionModel().selectedItemProperty().isNull()
-                        .or(modifiedProperty.not())
-                        .or(freqValidProperty.not())
+                        .or(modifiedProperty.not()).or(freqValidProperty.not())
                         .or(wordTextField.textProperty().isEmpty())
                         .or(definitionTextArea.textProperty().isEmpty()));
 
@@ -162,11 +161,8 @@ public class FXMLController implements Initializable {
     @FXML
     private void createButtonAction(ActionEvent actionEvent) {
         System.out.println("Create");
-        WordRecord wordRecord =
-                new WordRecord(
-                        wordTextField.getText(),
-                        Integer.parseInt(frequencyTextField.getText()),
-                        definitionTextArea.getText());
+        WordRecord wordRecord = new WordRecord(wordTextField.getText(),
+                Integer.parseInt(frequencyTextField.getText()), definitionTextArea.getText());
         wordRecordList.add(wordRecord);
         listView.getSelectionModel().select(wordRecord); // select the new item
     }

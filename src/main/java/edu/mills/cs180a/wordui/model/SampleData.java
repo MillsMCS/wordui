@@ -24,7 +24,7 @@ public class SampleData {
     protected static final String WOD_PUBLISHDATE_KEY = "publishDate";
     private static ApiClient client; // set in fillSampleData()
 
-    private static WordOfTheDay getWordOfTheDay(WordsApi wordsApi) {
+    protected static WordOfTheDay getWordOfTheDay(WordsApi wordsApi) {
         return wordsApi.getWordOfTheDay();
     }
 

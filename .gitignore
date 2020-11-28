@@ -60,3 +60,6 @@ local.properties
 #.project
 /target/
 api-key.txt
+
+#git .log 
+.log

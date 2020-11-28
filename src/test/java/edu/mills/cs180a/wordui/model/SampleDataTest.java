@@ -61,7 +61,7 @@ class SampleDataTest {
     }
 
     @Test
-    void testWOD() {
+    void getWordOfTheDay_True_CorrectWordReturned() {
         assertTrue("pepper".equals(SampleData.getWordOfTheDay(mockWordsApi).getWord()));
     }
 }

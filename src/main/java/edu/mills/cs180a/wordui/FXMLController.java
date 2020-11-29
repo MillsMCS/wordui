@@ -110,12 +110,11 @@ public class FXMLController implements Initializable {
         recordCountLabel.textProperty().bind(Bindings.size(listView.getItems()).asString());
 
         // Pre-select the first item.
-        listView.getSelectionModel().selectFirst();
+        // listView.getSelectionModel().selectFirst();
     }
 
     private void populateChoiceBox() {
-        sortChoiceBox.setItems(FXCollections.observableArrayList(
-                WordRecord.SortOrder.values()));
+        sortChoiceBox.setItems(FXCollections.observableArrayList(WordRecord.SortOrder.values()));
         sortChoiceBox.setValue(WordRecord.SortOrder.ALPHABETICALLY_FORWARD);
     }
 
@@ -126,15 +125,19 @@ public class FXMLController implements Initializable {
 
         // Disable the Update button if nothing is selected, no modifications have
         // been made, or any field is empty or invalid.
-        updateButton.disableProperty()
-                .bind(listView.getSelectionModel().selectedItemProperty().isNull()
+        updateButton.disableProperty().bind(
+                listView.getSelectionModel().selectedItemProperty().isNull()
                         .or(modifiedProperty.not())
-                        .or(freqValidProperty.not())
-                        .or(wordTextField.textProperty().isEmpty())
+                        .or(freqValidProperty.not()).or(wordTextField.textProperty().isEmpty())
                         .or(definitionTextArea.textProperty().isEmpty()));
 
-        // TODO: Disable the Create button if an existing entry is selected or any
+        // Disable the Create button if anything is selected or any
         // field is empty or invalid.
+        createButton.disableProperty()
+                .bind(listView.getSelectionModel().selectedItemProperty().isNotNull()
+                        .or(wordTextField.textProperty().isEmpty()).or(freqValidProperty.not())
+                        .or(wordTextField.textProperty().isEmpty())
+                        .or(definitionTextArea.textProperty().isEmpty()));
     }
 
     // A frequency is valid if it is an integer and is at least 0.
@@ -162,11 +165,8 @@ public class FXMLController implements Initializable {
     @FXML
     private void createButtonAction(ActionEvent actionEvent) {
         System.out.println("Create");
-        WordRecord wordRecord =
-                new WordRecord(
-                        wordTextField.getText(),
-                        Integer.parseInt(frequencyTextField.getText()),
-                        definitionTextArea.getText());
+        WordRecord wordRecord = new WordRecord(wordTextField.getText(),
+                Integer.parseInt(frequencyTextField.getText()), definitionTextArea.getText());
         wordRecordList.add(wordRecord);
         listView.getSelectionModel().select(wordRecord); // select the new item
     }

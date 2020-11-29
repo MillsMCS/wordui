@@ -18,7 +18,8 @@ public class SampleData {
     @VisibleForTesting
     protected static final String FREQ_YEAR_KEY = "year";
     private static final int FREQ_YEAR = 2012;
-    private static ApiClient client; // set in fillSampleData()
+    @VisibleForTesting
+    protected static ApiClient client; // set in fillSampleData()
 
     private static int getFrequencyFromSummary(FrequencySummary fs, int year) {
         List<Object> freqObjects = fs.getFrequency();
@@ -49,7 +50,8 @@ public class SampleData {
         return getFrequencyFromSummary(fs, year);
     }
 
-    private static WordRecord buildWordRecord(String word, Map<Object, Object> definition) {
+    @VisibleForTesting
+    protected static WordRecord buildWordRecord(String word, Map<Object, Object> definition) {
         WordApi wordApi = client.buildClient(WordApi.class);
         return new WordRecord(
                 word,
@@ -61,9 +63,18 @@ public class SampleData {
      * Fills a list of WordRecord objects.
      * 
      * @param backingList the list of words and their definition
+     * @throws IOException if unable to get API key
      */
     public static void fillSampleData(ObservableList<WordRecord> backingList) {
-    	addWordOfTheDay(backingList);
+    	try {
+            client = ApiClientHelper.getApiClient();
+            WordsApi wordsApi = client.buildClient(WordsApi.class);
+            WordOfTheDay word = getWordOfTheDay(wordsApi);
+            addWordOfTheDay(backingList, word);
+        } catch (IOException e) {
+            System.err.println("Unable to get API key.");
+        }
+    	
         backingList.add(new WordRecord("buffalo", 5153, "The North American bison."));
         backingList.add(new WordRecord("school", 23736, "A large group of aquatic animals."));
         backingList.add(new WordRecord("Java",
@@ -74,25 +85,19 @@ public class SampleData {
     
     /**
      * Adds the word of the day to a list of WordRecord objects.
-     * 
+     *  
      * @param backingList the list of words and their definition
+     * @param word the word of the day
      */
-    public static void addWordOfTheDay(ObservableList<WordRecord> backingList) {
-        try {
-            client = ApiClientHelper.getApiClient();
-            WordsApi wordsApi = client.buildClient(WordsApi.class);
-            WordOfTheDay word = getWordOfTheDay(wordsApi);
-            List<Object> definitions = word.getDefinitions();
-            if (definitions != null && !definitions.isEmpty()) {
-                Object definition = definitions.get(0);
-                if (definition instanceof Map) {
-                    @SuppressWarnings("unchecked")
-                    Map<Object, Object> definitionAsMap = (Map<Object, Object>) definition;
-                    backingList.add(buildWordRecord(word.getWord(), definitionAsMap));
-                }
+    public static void addWordOfTheDay(List<WordRecord> backingList, WordOfTheDay word) {
+    	List<Object> definitions = word.getDefinitions();
+    	if (definitions != null && !definitions.isEmpty()) {
+            Object definition = definitions.get(0);
+            if (definition instanceof Map) {
+                @SuppressWarnings("unchecked")
+                Map<Object, Object> definitionAsMap = (Map<Object, Object>) definition;
+                backingList.add(buildWordRecord(word.getWord(), definitionAsMap));
             }
-        } catch (IOException e) {
-            System.err.println("Unable to get API key.");
         }
     }
     

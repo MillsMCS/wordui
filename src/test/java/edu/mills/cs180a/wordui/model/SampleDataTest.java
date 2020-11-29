@@ -7,41 +7,44 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+
 import edu.mills.cs180a.wordnik.client.api.WordApi;
 import edu.mills.cs180a.wordnik.client.api.WordsApi;
+import edu.mills.cs180a.wordnik.client.invoker.ApiClient;
 import edu.mills.cs180a.wordnik.client.model.WordOfTheDay;
 import edu.mills.cs180a.wordnik.client.model.FrequencySummary;
-import edu.mills.cs180a.wordnik.client.model.Definition;
 
 class SampleDataTest {
     private final WordApi mockWordApi = mock(WordApi.class);
-    private final WordsApi mockWordsApi = mock(WordsApi.class);
     private final WordOfTheDay mockWordOfTheDay = mock(WordOfTheDay.class);
+    private final WordsApi mockWordsApi = mock(WordsApi.class);
+    private final ApiClient mockApiClient = mock(ApiClient.class);
     private static final Map<String, FrequencySummary> FREQS_MAP = Map.of(
+    		"dog", makeFrequencySummary(List.of(makeMap(2000, 12), makeMap(2020, 34))),
             "apple", makeFrequencySummary(List.of(makeMap(2000, 339), makeMap(2001, 464))),
             "orange", makeFrequencySummary(List.of(makeMap(2000, 774), makeMap(2001, 941))));
-    private static final Map<String, String> DEFINITION = Map.of(
+    private static final Map<Object, Object> DEFINITION = Map.of(
     		"source", "my dog",
     		"text", "An animal you take on walks.",
     		"note", "best note ever",
     		"PartOfSpeech", "noun");
     private static final List<Object> DEFINITIONS = makeDefinitions(DEFINITION);
     private static final String WORD = "dog";
-    private static final WordOfTheDay WOTD = makeWordOfTheDay(WORD, DEFINITIONS);
         
     @BeforeEach
     void setup() {
         when(mockWordApi.getWordFrequency(anyString(), anyString(), anyInt(), anyInt()))
                 .thenAnswer(invocation -> FREQS_MAP.get(invocation.getArgument(0)));
-        when(mockWordsApi.getWordOfTheDay()).thenReturn(WOTD);
-        //when(mockWordOfTheDay.getDefinitions()).thenReturn(DEFINITIONS);
+        when(mockWordsApi.getWordOfTheDay()).thenReturn(mockWordOfTheDay);
+        when(mockWordOfTheDay.getWord()).thenReturn(WORD);
+        when(mockWordOfTheDay.getDefinitions()).thenReturn(DEFINITIONS);
     }
 
     private static Map<Object, Object> makeMap(int year, int count) {
@@ -55,20 +58,7 @@ class SampleDataTest {
         return fs;
     }
     
-    private static WordsApi makeWordsApi(WordOfTheDay w) {
-    	WordsApi wapi = mock(WordsApi.class);
-    	when(wapi.getWordOfTheDay()).thenReturn(w);
-    	return wapi;
-    }
-    
-    private static WordOfTheDay makeWordOfTheDay(String w, List<Object> d) {
-    	WordOfTheDay wotd = mock(WordOfTheDay.class);
-    	when(wotd.getWord()).thenReturn(w);
-    	when(wotd.getDefinitions()).thenReturn(d);
-    	return wotd;
-    }
-    
-    private static List<Object> makeDefinitions(Map<String, String> definition) {
+    private static List<Object> makeDefinitions(Map<Object, Object> definition) {
     	List<Object> list = new ArrayList<Object>();
     	list.add(definition);
     	return list;
@@ -100,15 +90,33 @@ class SampleDataTest {
     void testGetDefinitions(String key, String value) {
     	WordOfTheDay wotd = SampleData.getWordOfTheDay(mockWordsApi);
     	
+    	/*
     	// Debug
     	try {
     		System.out.println("Definition: " + ((Map<String, String>) wotd.getDefinitions().get(0)).get(key));
     	} catch (Exception e) {
     		System.out.println(e);
     	}
+    	*/
     	
     	String returnValue = ( (Map<String, String>) wotd.getDefinitions().get(0) ).get(key);
     	assertEquals(0, returnValue.compareTo(value));
+    }
+    
+    @ParameterizedTest
+    @CsvSource({"dog"})    
+    void testAddWordOfTheDay(String s) {
+    	SampleData.client = mockApiClient;
+		when(SampleData.client.buildClient(WordApi.class)).thenReturn(mockWordApi);
+		LinkedList<WordRecord> list = new LinkedList<WordRecord>();
+		WordOfTheDay wotd = SampleData.getWordOfTheDay(mockWordsApi);
+    	SampleData.addWordOfTheDay(list, wotd);
+    	
+    	// Debug
+    	//System.out.println("Add word: " + wotd.getWord());
+    	//System.out.println("Add word:" + list.get(0).getWord());
+    	assertEquals(0, s.compareTo(list.get(0).getWord()));
+    	assertEquals(list.size(), 1);
     }
     
 }

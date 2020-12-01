@@ -18,7 +18,8 @@ public class SampleData {
     @VisibleForTesting
     protected static final String FREQ_YEAR_KEY = "year";
     private static final int FREQ_YEAR = 2012;
-    private static ApiClient client; // set in fillSampleData()
+    @VisibleForTesting
+    protected static ApiClient client; // set in fillSampleData()
 
     private static int getFrequencyFromSummary(FrequencySummary fs, int year) {
         List<Object> freqObjects = fs.getFrequency();
@@ -54,12 +55,32 @@ public class SampleData {
         return getFrequencyFromSummary(fs, year);
     }
 
-    private static WordRecord buildWordRecord(String word, Map<Object, Object> definition) {
+    @VisibleForTesting
+    protected static WordRecord buildWordRecord(String word, Map<Object, Object> definition) {
         WordApi wordApi = client.buildClient(WordApi.class);
         return new WordRecord(
                 word,
                 getFrequencyByYear(wordApi, word, FREQ_YEAR),
                 definition.get("text").toString());
+    }
+    
+    /***
+     * Adds the current word of the day to a given list of words.
+     * 
+     * @param backingList a list to which the word of the day will be added
+     * @param wordsApi the API used to get today's word of the day
+     */
+    @VisibleForTesting
+    protected static void addWordOfTheDay(List<WordRecord> backingList, WordOfTheDay word) {
+        List<Object> definitions = word.getDefinitions();
+        if(definitions != null && !definitions.isEmpty()) {
+            Object definition = definitions.get(0);
+            if (definition instanceof Map) {
+                @SuppressWarnings("unchecked")
+                Map<Object, Object> definitionAsMap = (Map<Object, Object>) definition;
+                backingList.add(buildWordRecord(word.getWord(), definitionAsMap));
+            }
+        }
     }
 
     /***
@@ -67,22 +88,16 @@ public class SampleData {
      * with the word of the day. Implements the wordnik API.
      * 
      * @param backingList a list of sample word records
-     * @throws IOException if unable to get wordnik API key
      */
     public static void fillSampleData(ObservableList<WordRecord> backingList) {
         try {
             client = ApiClientHelper.getApiClient();
             WordsApi wordsApi = client.buildClient(WordsApi.class);
             WordOfTheDay word = getWordOfTheDay(wordsApi);
-            List<Object> definitions = word.getDefinitions();
-            if (definitions != null && !definitions.isEmpty()) {
-                Object definition = definitions.get(0);
-                if (definition instanceof Map) {
-                    @SuppressWarnings("unchecked")
-                    Map<Object, Object> definitionAsMap = (Map<Object, Object>) definition;
-                    backingList.add(buildWordRecord(word.getWord(), definitionAsMap));
-                }
-            }
+            System.out.println("word (wotd): " + word.getWord());
+            System.out.println("defs: " + word.getDefinitions());
+            addWordOfTheDay(backingList, word);
+            
         } catch (IOException e) {
             System.err.println("Unable to get API key.");
         }

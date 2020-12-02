@@ -44,7 +44,6 @@ public class SampleData {
         return 0;
     }
 
-    // TODO: Move to spring-swagger-wordnik-client
     @VisibleForTesting
     protected static int getFrequencyByYear(WordApi wordApi, String word, int year) {
         FrequencySummary freqSummary =
@@ -52,12 +51,10 @@ public class SampleData {
         return getFrequencyFromSummary(freqSummary, year);
     }
 
-    private static WordRecord buildWordRecord(String word, Map<Object, Object> definition) {
-        // WordApi wordApi = client.buildClient(WordApi.class);//CAN DO THIS OOOOR
+    private static WordRecord buildWordRecord(WordApi wordApi, String word, Map<Object, Object> definition) {
         return new WordRecord(
                 word,
-                // getFrequencyByYear(wordApi, word, FREQ_YEAR),
-                getFrequencyByYear(client.buildClient(WordApi.class), word, FREQ_YEAR),
+                getFrequencyByYear(wordApi, word, FREQ_YEAR),
                 definition.get("text").toString());
     }
 
@@ -71,16 +68,8 @@ public class SampleData {
         try {
             client = ApiClientHelper.getApiClient();
             WordsApi wordsApi = client.buildClient(WordsApi.class);
-            WordOfTheDay word = getWordOfTheDay(wordsApi);
-            List<Object> definitions = word.getDefinitions();
-            if (definitions != null && !definitions.isEmpty()) {
-                Object definition = definitions.get(0);
-                if (definition instanceof Map) {
-                    @SuppressWarnings("unchecked")
-                    Map<Object, Object> definitionAsMap = (Map<Object, Object>) definition;
-                    backingList.add(buildWordRecord(word.getWord(), definitionAsMap));
-                }
-            }
+            WordApi wordApi = client.buildClient(WordApi.class);
+            addWordOfTheDay(wordApi, wordsApi, backingList);
         } catch (IOException e) {
             System.err.println("Unable to get API key.");
         }
@@ -91,6 +80,26 @@ public class SampleData {
                 179, "An island of Indonesia in the Malay Archipelago"));
         backingList.add(new WordRecord("random",
                 794, "Having no specific pattern, purpose, or objective"));
+    }
+
+    /**
+     * Appends a single WordRecord comprised of a WordOfTheDay
+     *
+     * @param wordsApi
+     * @param backingList An empty list of WordRecords
+     */
+    @VisibleForTesting
+    protected static void addWordOfTheDay(WordApi wordApi, WordsApi wordsApi, ObservableList<WordRecord> backingList) {
+        WordOfTheDay word = getWordOfTheDay(wordsApi);
+        List<Object> definitions = word.getDefinitions();
+        if (definitions != null && !definitions.isEmpty()) {
+            Object definition = definitions.get(0);
+            if (definition instanceof Map) {
+                @SuppressWarnings("unchecked")
+                Map<Object, Object> definitionAsMap = (Map<Object, Object>) definition;
+                backingList.add(buildWordRecord(wordApi, word.getWord(), definitionAsMap));
+            }
+        }
     }
 
     @VisibleForTesting

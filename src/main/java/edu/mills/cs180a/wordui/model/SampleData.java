@@ -14,13 +14,14 @@ import javafx.collections.ObservableList;
 
 public class SampleData {
     @VisibleForTesting
-    protected static final String DATE_KEY = "date";
+    protected static final String WORD_KEY = "word";
     @VisibleForTesting
     protected static final String FREQ_COUNT_KEY = "count";
     @VisibleForTesting
     protected static final String FREQ_YEAR_KEY = "year";
-    private static final int FREQ_YEAR = 2012;
-    private static ApiClient client;
+    @VisibleForTesting
+    protected static final int FREQ_YEAR = 2012;
+    private static ApiClient client; // set in fillSampleData()
 
 
     @VisibleForTesting
@@ -50,31 +51,47 @@ public class SampleData {
     }
 
     @VisibleForTesting
-    protected static String getWord(WordsApi wordsApi, String date) {
-        WordOfTheDay wd = wordsApi.getWordOfTheDay(date);
-        String word = wd.getWord();
-        return word;
+    public static List<Object> getDefinitions(WordsApi WordsApi) {
+        return WordsApi.getWordOfTheDay().getDefinitions();
+    }
+
+    @VisibleForTesting
+    public static String getWord(WordsApi WordsApi) {
+        return WordsApi.getWordOfTheDay().getWord();
+    }
+
+    @VisibleForTesting
+    public static String getWord(WordOfTheDay wod) {
+        return wod.getWord();
     }
 
     protected static WordOfTheDay getWordOfTheDay(WordsApi WordsApi) {
         return WordsApi.getWordOfTheDay();
     }
 
+    @VisibleForTesting
+    public static WordRecord addWordOfTheDay(WordsApi wordsApi) {
+
+        WordOfTheDay word = getWordOfTheDay(wordsApi);
+        List<Object> definitions = word.getDefinitions();
+        if (definitions != null && !definitions.isEmpty()) {
+            Object definition = definitions.get(0);
+            if (definition instanceof Map) {
+                @SuppressWarnings("unchecked")
+                Map<Object, Object> definitionAsMap = (Map<Object, Object>) definition;
+                return (buildWordRecord(word.getWord(), definitionAsMap));
+            }
+        }
+
+        return null;
+    }
+
     public static void fillSampleData(ObservableList<WordRecord> backingList) {
         try {
             client = ApiClientHelper.getApiClient();
             WordsApi wordsApi = client.buildClient(WordsApi.class);
-
-            WordOfTheDay word = getWordOfTheDay(wordsApi);
-            List<Object> definitions = word.getDefinitions();
-            if (definitions != null && !definitions.isEmpty()) {
-                Object definition = definitions.get(0);
-                if (definition instanceof Map) {
-                    @SuppressWarnings("unchecked")
-                    Map<Object, Object> definitionAsMap = (Map<Object, Object>) definition;
-                    backingList.add(buildWordRecord(word.getWord(), definitionAsMap));
-                }
-            }
+            backingList.add(addWordOfTheDay(wordsApi));
+            // backingList.add(addWordOfTheDay());
         } catch (IOException e) {
             System.err.println("Unable to get API key.");
         }
@@ -93,3 +110,36 @@ public class SampleData {
                 definition.get("text").toString());
     }
 }
+
+// back up
+// public static void fillSampleData(ObservableList<WordRecord> backingList) {
+// try {
+// client = ApiClientHelper.getApiClient();
+// WordsApi wordsApi = client.buildClient(WordsApi.class);
+//
+// // getWordOfTheDayを実行
+// // WordOfTheDay word = wordsApi.getWordOfTheDay();
+//
+// WordOfTheDay word = getWordOfTheDay(wordsApi);
+//
+// // 意味を取得
+// List<Object> definitions = word.getDefinitions();
+// if (definitions != null && !definitions.isEmpty()) {
+// Object definition = definitions.get(0);
+// if (definition instanceof Map) {
+// @SuppressWarnings("unchecked")
+// Map<Object, Object> definitionAsMap = (Map<Object, Object>) definition;
+// backingList.add(buildWordRecord(word.getWord(), definitionAsMap));
+// }
+// }
+// } catch (IOException e) {
+// System.err.println("Unable to get API key.");
+// }
+//
+// backingList.add(new WordRecord("buffalo", 5153, "The North American bison."));
+// backingList.add(new WordRecord("school", 23736, "A large group of aquatic animals."));
+// backingList.add(
+// new WordRecord("Java", 179, "An island of Indonesia in the Malay Archipelago"));
+// backingList.add(
+// new WordRecord("random", 794, "Having no specific pattern, purpose, or objective"));
+// }

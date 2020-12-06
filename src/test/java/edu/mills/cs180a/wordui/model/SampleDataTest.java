@@ -28,7 +28,6 @@ import edu.mills.cs180a.wordnik.client.model.WordOfTheDay;
 class SampleDataTest {
     private final WordApi mockWordApi = mock(WordApi.class);
     private final WordsApi mockWordsApi = mock(WordsApi.class);
-
     private static final Map<String, FrequencySummary> FREQS_MAP = Map.of("apple",
             makeFrequencySummary(List.of(makeMap(2000, 339), makeMap(2001, 464))), "orange",
             makeFrequencySummary(List.of(makeMap(2000, 774), makeMap(2001, 941))), "blueberry",

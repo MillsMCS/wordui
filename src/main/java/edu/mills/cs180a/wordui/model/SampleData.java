@@ -67,7 +67,6 @@ public class SampleData {
         return WordsApi.getWordOfTheDay().getWord();
     }
 
-    @VisibleForTesting
     protected static WordOfTheDay getWordOfTheDay(WordsApi WordsApi) {
         return WordsApi.getWordOfTheDay();
     }

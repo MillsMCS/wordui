@@ -107,6 +107,7 @@ class SampleDataTest {
         Object definition = getDefin.get(0);
         @SuppressWarnings("unchecked")
         Map<Object, Object> definitionAsMap = (Map<Object, Object>) definition;
+
         WordRecord testWordRecord = new WordRecord(
                 sd.getWordOfTheDay(mockWordsApi).getWord(), getFrequencyByYear(mockWordApi,
                         sd.getWordOfTheDay(mockWordsApi).getWord(), FREQ_YEAR),

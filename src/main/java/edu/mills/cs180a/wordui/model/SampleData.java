@@ -73,9 +73,9 @@ public class SampleData {
     /**
      * Get definitions and create WordRecord data.
      *
-     * @param wordsApi API key client
+     * @param wordsApi API key client.
      * @return Return data to be displayed on the screen. return null, if definitions is null or
-     *         empty
+     *         empty.
      */
     public static WordRecord addWordOfTheDay(WordsApi wordsApi) {
         List<Object> definitions = getWordOfTheDay(wordsApi).getDefinitions();
@@ -91,9 +91,9 @@ public class SampleData {
     }
 
     /**
-     * Create sample data for display on the list
+     * Create sample data for display on the list.
      *
-     * @param backingList A list that allows listeners to track when something changes
+     * @param backingList A list that allows listeners to track when something changes.
      */
     public static void fillSampleData(ObservableList<WordRecord> backingList) {
         try {

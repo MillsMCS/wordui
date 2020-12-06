@@ -30,7 +30,6 @@ public class SampleData {
     protected static final int FREQ_YEAR = 2012;
     private static ApiClient client; // set in fillSampleData()
 
-
     @VisibleForTesting
     protected static int getFrequencyByYear(WordApi wordApi, String word, int year) {
         FrequencySummary fs = wordApi.getWordFrequency(word, "false", year, year);

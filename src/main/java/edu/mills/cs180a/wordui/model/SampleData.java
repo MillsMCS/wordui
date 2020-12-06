@@ -12,6 +12,13 @@ import edu.mills.cs180a.wordnik.client.model.FrequencySummary;
 import edu.mills.cs180a.wordnik.client.model.WordOfTheDay;
 import javafx.collections.ObservableList;
 
+/**
+ * Create sample data to display on the list in JavaFX.
+ *
+ * @author Ellen Spertus
+ * @author Makie Maekawa
+ *
+ */
 public class SampleData {
     @VisibleForTesting
     protected static final String WORD_KEY = "word";
@@ -61,37 +68,40 @@ public class SampleData {
     }
 
     @VisibleForTesting
-    public static String getWord(WordOfTheDay wod) {
-        return wod.getWord();
-    }
-
     protected static WordOfTheDay getWordOfTheDay(WordsApi WordsApi) {
         return WordsApi.getWordOfTheDay();
     }
 
-    @VisibleForTesting
+    /**
+     * Get definitions and create WordRecord data.
+     *
+     * @param wordsApi API key client
+     * @return Return data to be displayed on the screen. return null, if definitions is null or
+     *         empty
+     */
     public static WordRecord addWordOfTheDay(WordsApi wordsApi) {
-
-        WordOfTheDay word = getWordOfTheDay(wordsApi);
-        List<Object> definitions = word.getDefinitions();
+        List<Object> definitions = getWordOfTheDay(wordsApi).getDefinitions();
         if (definitions != null && !definitions.isEmpty()) {
             Object definition = definitions.get(0);
             if (definition instanceof Map) {
                 @SuppressWarnings("unchecked")
                 Map<Object, Object> definitionAsMap = (Map<Object, Object>) definition;
-                return (buildWordRecord(word.getWord(), definitionAsMap));
+                return (buildWordRecord(getWordOfTheDay(wordsApi).getWord(), definitionAsMap));
             }
         }
-
         return null;
     }
 
+    /**
+     * Create sample data for display on the list
+     *
+     * @param backingList A list that allows listeners to track when something changes
+     */
     public static void fillSampleData(ObservableList<WordRecord> backingList) {
         try {
             client = ApiClientHelper.getApiClient();
             WordsApi wordsApi = client.buildClient(WordsApi.class);
             backingList.add(addWordOfTheDay(wordsApi));
-            // backingList.add(addWordOfTheDay());
         } catch (IOException e) {
             System.err.println("Unable to get API key.");
         }
@@ -104,42 +114,9 @@ public class SampleData {
                 new WordRecord("random", 794, "Having no specific pattern, purpose, or objective"));
     }
 
-    private static WordRecord buildWordRecord(String word, Map<Object, Object> definition) {
+    protected static WordRecord buildWordRecord(String word, Map<Object, Object> definition) {
         WordApi wordApi = client.buildClient(WordApi.class);
         return new WordRecord(word, getFrequencyByYear(wordApi, word, FREQ_YEAR),
                 definition.get("text").toString());
     }
 }
-
-// back up
-// public static void fillSampleData(ObservableList<WordRecord> backingList) {
-// try {
-// client = ApiClientHelper.getApiClient();
-// WordsApi wordsApi = client.buildClient(WordsApi.class);
-//
-// // getWordOfTheDayを実行
-// // WordOfTheDay word = wordsApi.getWordOfTheDay();
-//
-// WordOfTheDay word = getWordOfTheDay(wordsApi);
-//
-// // 意味を取得
-// List<Object> definitions = word.getDefinitions();
-// if (definitions != null && !definitions.isEmpty()) {
-// Object definition = definitions.get(0);
-// if (definition instanceof Map) {
-// @SuppressWarnings("unchecked")
-// Map<Object, Object> definitionAsMap = (Map<Object, Object>) definition;
-// backingList.add(buildWordRecord(word.getWord(), definitionAsMap));
-// }
-// }
-// } catch (IOException e) {
-// System.err.println("Unable to get API key.");
-// }
-//
-// backingList.add(new WordRecord("buffalo", 5153, "The North American bison."));
-// backingList.add(new WordRecord("school", 23736, "A large group of aquatic animals."));
-// backingList.add(
-// new WordRecord("Java", 179, "An island of Indonesia in the Malay Archipelago"));
-// backingList.add(
-// new WordRecord("random", 794, "Having no specific pattern, purpose, or objective"));
-// }

@@ -5,7 +5,6 @@ import java.util.ResourceBundle;
 import edu.mills.cs180a.wordui.model.SampleData;
 import edu.mills.cs180a.wordui.model.WordRecord;
 import edu.mills.cs180a.wordui.model.WordRecord.SortOrder;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.StringProperty;
@@ -19,15 +18,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 
 public class FXMLController implements Initializable {
-    @FXML
-    private Label recordCountLabel;
     @FXML
     private TextField wordTextField;
     @FXML
@@ -50,9 +46,12 @@ public class FXMLController implements Initializable {
     private WordRecord selectedWordRecord;
     private final BooleanProperty modifiedProperty = new SimpleBooleanProperty(false);
     private final BooleanProperty freqValidProperty = new SimpleBooleanProperty(false);
+    private final BooleanProperty wordExistPropertyCreate = new SimpleBooleanProperty(false);
+    private final BooleanProperty wordExistPropertyUpdate = new SimpleBooleanProperty(false);
     private ChangeListener<WordRecord> wordRecordChangeListener = new WordRecordChangeListener();
     private ChangeListener<WordRecord.SortOrder> sortOrderChangeListener =
             new SortOrderChangeListener();
+    private WordRecord.SortOrder currentSort;
 
     // Called when the user selects or unselects a WordRecord.
     private class WordRecordChangeListener implements ChangeListener<WordRecord> {
@@ -63,14 +62,19 @@ public class FXMLController implements Initializable {
             System.out.println("Selected item: " + newValue);
             selectedWordRecord = newValue;
             modifiedProperty.set(false);
+
             if (newValue != null) {
                 wordTextField.setText(selectedWordRecord.getWord());
                 frequencyTextField.setText(Integer.toString(selectedWordRecord.getFrequency()));
+                wordExistPropertyCreate.set(isExistWordCreate(wordTextField.getText()));
+                wordExistPropertyUpdate.set(isExistWordCreate(wordTextField.getText()));
                 freqValidProperty.set(isValidFrequency(frequencyTextField.textProperty()));
                 definitionTextArea.setText(selectedWordRecord.getDefinition());
             } else {
                 wordTextField.setText("");
                 frequencyTextField.setText("");
+                wordExistPropertyCreate.set(false);
+                wordExistPropertyUpdate.set(false);
                 freqValidProperty.set(false);
                 definitionTextArea.setText("");
             }
@@ -89,36 +93,32 @@ public class FXMLController implements Initializable {
         SortedList<WordRecord> sortedList = new SortedList<>(wordRecordList);
         sortedList.setComparator(newOrder.getComparator());
         listView.setItems(sortedList);
+        currentSort = newOrder;
     }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        addListeners();
-        setupListView();
-        configureButtons();
-        populateChoiceBox();
-    }
-
-    private void setupListView() {
         // Initialize the list.
         SampleData.fillSampleData(wordRecordList);
+
+        configureButtons();
 
         // Sort list alphabetically.
         setSortOrder(WordRecord.SortOrder.ALPHABETICALLY_FORWARD);
 
-        // Set up the record count. This must occur after listView is populated.
-        recordCountLabel.textProperty().bind(Bindings.size(listView.getItems()).asString());
+        populateChoiceBox();
+        addListeners();
 
         // Pre-select the first item.
         listView.getSelectionModel().selectFirst();
     }
 
     private void populateChoiceBox() {
-        sortChoiceBox.setItems(FXCollections.observableArrayList(
-                WordRecord.SortOrder.values()));
+        sortChoiceBox.setItems(FXCollections.observableArrayList(WordRecord.SortOrder.values()));
         sortChoiceBox.setValue(WordRecord.SortOrder.ALPHABETICALLY_FORWARD);
     }
 
+    //@formatter:off
     private void configureButtons() {
         // Disable the Remove button if nothing is selected in the ListView control.
         removeButton.disableProperty()
@@ -129,12 +129,43 @@ public class FXMLController implements Initializable {
         updateButton.disableProperty()
                 .bind(listView.getSelectionModel().selectedItemProperty().isNull()
                         .or(modifiedProperty.not())
+                        .or(wordExistPropertyUpdate.not())
                         .or(freqValidProperty.not())
                         .or(wordTextField.textProperty().isEmpty())
                         .or(definitionTextArea.textProperty().isEmpty()));
 
-        // TODO: Disable the Create button if an existing entry is selected or any
+        // Disable the Create button if an existing entry is selected or any
         // field is empty or invalid.
+        createButton.disableProperty()
+                .bind(listView.getSelectionModel().selectedItemProperty().isNull()
+                        .or(modifiedProperty.not())
+                        .or(wordExistPropertyCreate.not())
+                        .or(freqValidProperty.not())
+                        .or(wordTextField.textProperty().isEmpty())
+                        .or(definitionTextArea.textProperty().isEmpty()));
+    }
+    //@formatter:on
+
+    // Return false if the word exists when create.
+    private boolean isExistWordCreate(String s) {
+        for (WordRecord list : wordRecordList) {
+            if (list.getWord().equals(s))
+                return false;
+        }
+        return true;
+    }
+
+    // Return false if the word exists without itself when update.
+    private boolean doesWordExistUpdate(String s) {
+        if (s.equals(selectedWordRecord.getWord())) {
+            return true;
+        } else {
+            for (WordRecord list : wordRecordList) {
+                if (list.getWord().equals(s))
+                    return false;
+            }
+        }
+        return true;
     }
 
     // A frequency is valid if it is an integer and is at least 0.
@@ -157,16 +188,16 @@ public class FXMLController implements Initializable {
     private void handleKeyAction(KeyEvent keyEvent) {
         modifiedProperty.set(true);
         freqValidProperty.set(isValidFrequency(frequencyTextField.textProperty()));
+        wordExistPropertyCreate.set(isExistWordCreate(wordTextField.getText()));
+        wordExistPropertyUpdate.set(doesWordExistUpdate(wordTextField.getText()));
     }
 
     @FXML
     private void createButtonAction(ActionEvent actionEvent) {
         System.out.println("Create");
-        WordRecord wordRecord =
-                new WordRecord(
-                        wordTextField.getText(),
-                        Integer.parseInt(frequencyTextField.getText()),
-                        definitionTextArea.getText());
+
+        WordRecord wordRecord = new WordRecord(wordTextField.getText(),
+                Integer.parseInt(frequencyTextField.getText()), definitionTextArea.getText());
         wordRecordList.add(wordRecord);
         listView.getSelectionModel().select(wordRecord); // select the new item
     }
@@ -188,5 +219,6 @@ public class FXMLController implements Initializable {
         entry.setDefinition(definitionTextArea.getText());
         listView.getSelectionModel().selectedItemProperty().addListener(wordRecordChangeListener);
         modifiedProperty.set(false);
+        setSortOrder(currentSort);
     }
 }

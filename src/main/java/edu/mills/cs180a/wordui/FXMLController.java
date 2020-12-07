@@ -130,8 +130,9 @@ public class FXMLController implements Initializable {
         // field is empty or invalid.
         createButton.disableProperty()
         .bind(listView.getSelectionModel().selectedItemProperty().isNotNull()
-                .or((wordTextField.textProperty().isEmpty()).and(definitionTextArea.textProperty().isEmpty()))
-                .or(freqValidProperty.not()));
+                .or((wordTextField.textProperty().isEmpty())
+                        .or(definitionTextArea.textProperty().isEmpty())
+                        .or(freqValidProperty.not())));
     }
 
     // A frequency is valid if it is an integer and is at least 0.

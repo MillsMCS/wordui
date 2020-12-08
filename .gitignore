@@ -62,4 +62,4 @@ local.properties
 api-key.txt
 
 #git .log 
-.log
+*.log

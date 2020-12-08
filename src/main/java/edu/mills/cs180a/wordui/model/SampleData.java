@@ -19,9 +19,6 @@ public class SampleData {
     protected static final String FREQ_YEAR_KEY = "year";
     private static final int FREQ_YEAR = 2012;
     @VisibleForTesting
-    protected static final String WOD_WORD_KEY = "word";
-    @VisibleForTesting
-    protected static final String WOD_PUBLISHDATE_KEY = "publishDate";
     private static ApiClient client; // set in fillSampleData()
 
     protected static WordOfTheDay getWordOfTheDay(WordsApi wordsApi) {
@@ -63,12 +60,18 @@ public class SampleData {
                 definition.get("text").toString());
     }
 
+    /**
+     * Fill backing list with Word Record of the day and predefined sample words.
+     *
+     * @param backingList a list of word records that will be displayed
+     */
     public static void fillSampleData(ObservableList<WordRecord> backingList) {
         try {
             client = ApiClientHelper.getApiClient();
             WordsApi wordsApi = client.buildClient(WordsApi.class);
             WordOfTheDay word = getWordOfTheDay(wordsApi);
             List<Object> definitions = word.getDefinitions();
+            System.out.println(word.getDefinitions());
             if (definitions != null && !definitions.isEmpty()) {
                 Object definition = definitions.get(0);
                 if (definition instanceof Map) {

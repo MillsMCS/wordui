@@ -1,11 +1,11 @@
 package edu.mills.cs180a.wordui.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,7 +24,11 @@ class SampleDataTest {
     private final WordApi mockWordApi = mock(WordApi.class);
     @Mock
     private final WordsApi mockWordsApi = mock(WordsApi.class);
-    private WordOfTheDay wod = makeWOD("pepper");
+    private static final Map<Object, Object> PEPPER_DEF = Map.of("text",
+            "A perennial climbing vine (Piper nigrum) native to India, widely cultivated for its long slender spikes of small fruit.");
+    private static final List<Object> DEFS = List.of(PEPPER_DEF);
+    private static final String PEPPER = "pepper";
+    private WordOfTheDay wod = makeWOD(PEPPER, DEFS);
     private static final Map<String, FrequencySummary> FREQS_MAP = Map.of("apple",
             makeFrequencySummary(List.of(makeFreqMap(2000, 339), makeFreqMap(2001, 464))), "orange",
             makeFrequencySummary(List.of(makeFreqMap(2000, 774), makeFreqMap(2001, 941))));
@@ -54,14 +58,31 @@ class SampleDataTest {
         assertEquals(count, SampleData.getFrequencyByYear(mockWordApi, word, year));
     }
 
-    private static WordOfTheDay makeWOD(String word) {
+    private static WordOfTheDay makeWOD(String word, List<Object> defs) {
         WordOfTheDay wod = mock(WordOfTheDay.class);
         when(wod.getWord()).thenReturn(word);
+        when(wod.getDefinitions()).thenReturn(defs);
         return wod;
     }
 
     @Test
-    void getWordOfTheDay_True_CorrectWordReturned() {
-        assertTrue("pepper".equals(SampleData.getWordOfTheDay(mockWordsApi).getWord()));
+    void getWord_True_CorrectWordReturned() {
+        assertEquals("pepper", SampleData.getWordOfTheDay(mockWordsApi).getWord());
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    void getDefinitions_True_CorrectDefinitionsReturned() {
+        Map<Object, Object> defs = copyMap(PEPPER_DEF);
+        assertEquals(defs, (Map<Object, Object>) SampleData.getWordOfTheDay(mockWordsApi)
+                .getDefinitions().get(0));
+    }
+
+    private Map<Object, Object> copyMap(Map<Object, Object> originalMap) {
+        Map<Object, Object> newMap = new HashMap<Object, Object>();
+        for (Object elt : originalMap.keySet()) {
+            newMap.put(elt, originalMap.get(elt));
+        }
+        return newMap;
     }
 }

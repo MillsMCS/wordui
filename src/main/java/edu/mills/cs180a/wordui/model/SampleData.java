@@ -21,6 +21,7 @@ public class SampleData {
     @VisibleForTesting
     private static ApiClient client; // set in fillSampleData()
 
+    @VisibleForTesting
     protected static WordOfTheDay getWordOfTheDay(WordsApi wordsApi) {
         return wordsApi.getWordOfTheDay();
     }
@@ -54,32 +55,38 @@ public class SampleData {
         return getFrequencyFromSummary(fs, year);
     }
 
-    private static WordRecord buildWordRecord(String word, Map<Object, Object> definition) {
-        WordApi wordApi = client.buildClient(WordApi.class);
+    private static WordRecord buildWordRecord(WordApi wordApi, String word,
+            Map<Object, Object> definition) {
         return new WordRecord(word, getFrequencyByYear(wordApi, word, FREQ_YEAR),
                 definition.get("text").toString());
     }
 
+    @VisibleForTesting
+    protected static void addWordOfTheDay(WordApi wordApi, WordsApi wordsApi,
+            ObservableList<WordRecord> backingList) {
+        WordOfTheDay word = getWordOfTheDay(wordsApi);
+        List<Object> definitions = word.getDefinitions();
+        if (definitions != null && !definitions.isEmpty()) {
+            Object definition = definitions.get(0);
+            if (definition instanceof Map) {
+                @SuppressWarnings("unchecked")
+                Map<Object, Object> definitionAsMap = (Map<Object, Object>) definition;
+                backingList.add(buildWordRecord(wordApi, word.getWord(), definitionAsMap));
+            }
+        }
+    }
+
     /**
-     * Fill backing list with Word Record of the day and predefined sample words.
+     * Fill backing list with Word of the day and predefined sample words.
      *
      * @param backingList a list of word records that will be displayed
      */
     public static void fillSampleData(ObservableList<WordRecord> backingList) {
         try {
             client = ApiClientHelper.getApiClient();
+            WordApi wordApi = client.buildClient(WordApi.class);
             WordsApi wordsApi = client.buildClient(WordsApi.class);
-            WordOfTheDay word = getWordOfTheDay(wordsApi);
-            List<Object> definitions = word.getDefinitions();
-            System.out.println(word.getDefinitions());
-            if (definitions != null && !definitions.isEmpty()) {
-                Object definition = definitions.get(0);
-                if (definition instanceof Map) {
-                    @SuppressWarnings("unchecked")
-                    Map<Object, Object> definitionAsMap = (Map<Object, Object>) definition;
-                    backingList.add(buildWordRecord(word.getWord(), definitionAsMap));
-                }
-            }
+            addWordOfTheDay(wordApi, wordsApi, backingList);
         } catch (IOException e) {
             System.err.println("Unable to get API key.");
         }

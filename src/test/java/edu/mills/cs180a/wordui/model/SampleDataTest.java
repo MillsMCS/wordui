@@ -1,6 +1,7 @@
 package edu.mills.cs180a.wordui.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -84,6 +85,13 @@ class SampleDataTest {
         Map<Object, Object> defs = copyMap(PEPPER_DEF_MAP);
         assertEquals(defs, (Map<Object, Object>) SampleData.getWordOfTheDay(mockWordsApi)
                 .getDefinitions().get(0));
+    }
+
+    @Test
+    void addWordOfTheDay_ExceptionThrown_ObservableListNull() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            SampleData.addWordOfTheDay(mockWordApi, mockWordsApi, null);
+        });
     }
 
     @Test

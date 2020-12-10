@@ -64,6 +64,9 @@ public class SampleData {
     @VisibleForTesting
     protected static void addWordOfTheDay(WordApi wordApi, WordsApi wordsApi,
             ObservableList<WordRecord> backingList) {
+        if (backingList == null) {
+            throw new IllegalArgumentException("backingList is null");
+        }
         WordOfTheDay word = getWordOfTheDay(wordsApi);
         List<Object> definitions = word.getDefinitions();
         if (definitions != null && !definitions.isEmpty()) {

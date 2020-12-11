@@ -51,7 +51,8 @@ public class SampleData {
         return getFrequencyFromSummary(freqSummary, year);
     }
 
-    private static WordRecord buildWordRecord(WordApi wordApi, String word, Map<Object, Object> definition) {
+    private static WordRecord buildWordRecord(WordApi wordApi, String word,
+            Map<Object, Object> definition) {
         return new WordRecord(
                 word,
                 getFrequencyByYear(wordApi, word, FREQ_YEAR),
@@ -59,10 +60,10 @@ public class SampleData {
     }
 
     /**
-     * Builds a scene containing a predefined list of words with subsequent frequency count and
-     * definitions and a word of the day with defintions.
+     * Passes a list of words with subsequent frequency count and definitions and a word of the day
+     * with defintions to a generated scene.
      *
-     * @param backingList An empty list of WordRecords
+     * @param backingList list to add the {@link WordOfTheDay} to
      */
     public static void fillSampleData(ObservableList<WordRecord> backingList) {
         try {
@@ -83,13 +84,14 @@ public class SampleData {
     }
 
     /**
-     * Appends a single WordRecord comprised of a WordOfTheDay
+     * Appends a single {@link WordOfTheDay} {@link WordRecord} to backList.
      *
-     * @param wordsApi
+     * @param wordsApi api
      * @param backingList An empty list of WordRecords
      */
     @VisibleForTesting
-    protected static void addWordOfTheDay(WordApi wordApi, WordsApi wordsApi, ObservableList<WordRecord> backingList) {
+    protected static void addWordOfTheDay(WordApi wordApi, WordsApi wordsApi,
+            ObservableList<WordRecord> backingList) {
         WordOfTheDay word = getWordOfTheDay(wordsApi);
         List<Object> definitions = word.getDefinitions();
         if (definitions != null && !definitions.isEmpty()) {

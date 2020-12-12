@@ -34,8 +34,9 @@ class SampleDataTest {
             WORD_OF_THE_DAY, makeFrequencySummary(List.of(makeMap(2012, 1))));
 
     private static final List<Object> DEFINITIONS = List.of(
-            "In pharmacy, a medicine composed of powders or other ingredients, incorporated with some conserve, honey, or syrup, originally made in a form to be licked by the patient.",
-            "Any preparation of a medicine mixed with honey or similar in order to make it more palatable to swallow.");
+            "In pharmacy, a medicine composed of powders or other ingredients, incorporated with "
+                    + "some conserve, honey, or syrup, originally made in a form to be licked by the patient. "
+                    + "Any preparation of a medicine mixed with honey or similar in order to make it more palatable to swallow.");
 
     private static final List<Object> MOCK_DEFINITIONS_MAP =
             List.of(Map.of("text", DEFINITIONS.get(0)));
@@ -63,22 +64,39 @@ class SampleDataTest {
     @ParameterizedTest
     @CsvSource({"apple,2000, 339", "apple,2001,464", "apple,2002,0", "orange,2000,774",
         "orange,2001,941", "orange,2002,0"})
-    void getFreqByYear_CorrectCount_(String word, int year, int count) {
+    void getFreqByYear_CorrectCount_AGivenWordRecord(String word, int year, int count) {
         assertEquals(count, SampleData.getFrequencyByYear(mockWordApi, word, year));
     }
 
     @Test
-    void getWordOfTheDay_CorrectlyFillsInfo_MockWordOfTheDay() {
+    void getWordOfTheDay_GeneratesWordRecord_MockWordOfTheDay() {
+        List<Object> testMap = List.of(Map.of("text",
+                "In pharmacy, a medicine composed of powders or other ingredients, incorporated "
+                        + "with some conserve, honey, or syrup, originally made in a form to be licked by "
+                        + "the patient. Any preparation of a medicine mixed with honey or similar in order "
+                        + "to make it more palatable to swallow."));
         WordOfTheDay word = SampleData.getWordOfTheDay(mockWordsApi);
-        assertEquals(WORD_OF_THE_DAY, word.getWord());
+        assertEquals("electuary", word.getWord());
         assertEquals(1, word.getDefinitions().size());
+        assertEquals(testMap, word.getDefinitions());
+        assertEquals(1, SampleData.getFrequencyByYear(mockWordApi, word.getWord(), 2012));
     }
 
     @Test
     void addWordOfTheDay_CorrectlyFillsObservableList_MockWordOfTheDay() {
+        List<Object> testMap = List.of(Map.of("text",
+                "In pharmacy, a medicine composed of powders or other ingredients, incorporated "
+                        + "with some conserve, honey, or syrup, originally made in a form to be licked by "
+                        + "the patient. Any preparation of a medicine mixed with honey or similar in order "
+                        + "to make it more palatable to swallow."));
         List<WordRecord> testList = new ArrayList<WordRecord>();
         ObservableList<WordRecord> observable = FXCollections.observableList(testList);
         SampleData.addWordOfTheDay(mockWordApi, mockWordsApi, observable);
+        WordOfTheDay word = SampleData.getWordOfTheDay(mockWordsApi);
         assertEquals(1, observable.size());
+        assertEquals("electuary", word.getWord());
+        assertEquals(testMap, word.getDefinitions());
+        assertEquals(1, word.getDefinitions().size());
+        assertEquals(1, SampleData.getFrequencyByYear(mockWordApi, word.getWord(), 2012));
     }
 }

@@ -60,10 +60,9 @@ public class SampleData {
     }
 
     /**
-     * Passes a list of words with subsequent frequency count and definitions and a word of the day
-     * with defintions to a generated scene.
+     * Adds a word of the day {@link WordRecord}
      *
-     * @param backingList list to add the {@link WordOfTheDay} to
+     * @param backingList list to add the word of the day {@link WordRecord} to
      */
     public static void fillSampleData(ObservableList<WordRecord> backingList) {
         try {
@@ -86,7 +85,7 @@ public class SampleData {
     /**
      * Appends a single {@link WordOfTheDay} {@link WordRecord} to backList.
      *
-     * @param wordsApi api
+     * @param wordsApi the API client
      * @param backingList An empty list of WordRecords
      */
     @VisibleForTesting

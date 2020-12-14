@@ -32,7 +32,7 @@ class SampleDataTest {
     private static final Map<Object, Object> SAMPLE_WORD_DEF_MAP = Map.of("text", SAMPLE_WORD_DEF);
     private static final List<Object> SAMPLE_WORD_DEF_LIST = List.of(SAMPLE_WORD_DEF_MAP);
     private static final String SAMPLE_WORD_STRING = "pepper";
-    private static final WordOfTheDay WORD_OF_THE_DAY =
+    private static final WordOfTheDay SAMPLE_WORD_OF_THE_DAY =
             makeWOD(SAMPLE_WORD_STRING, SAMPLE_WORD_DEF_LIST);
     private static final int SAMPLE_WORD_FREQ = 1;
     private static final FrequencySummary SAMPLE_WORD_FREQ_SUMMARY =
@@ -47,7 +47,7 @@ class SampleDataTest {
                 .thenAnswer(invocation -> FREQS_MAP.get(invocation.getArgument(0)));
         when(mockWordApi.getWordFrequency(eq(SAMPLE_WORD_STRING), anyString(), anyInt(), anyInt()))
                 .thenReturn(SAMPLE_WORD_FREQ_SUMMARY);
-        when(mockWordsApi.getWordOfTheDay()).thenReturn(WORD_OF_THE_DAY);
+        when(mockWordsApi.getWordOfTheDay()).thenReturn(SAMPLE_WORD_OF_THE_DAY);
     }
 
     private static Map<Object, Object> makeFreqMap(int year, int count) {

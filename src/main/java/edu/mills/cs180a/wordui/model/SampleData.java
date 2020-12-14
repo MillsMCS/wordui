@@ -61,8 +61,15 @@ public class SampleData {
                 definition.get("text").toString());
     }
 
-    @VisibleForTesting
-    protected static void addWordOfTheDay(WordApi wordApi, WordsApi wordsApi,
+    /**
+     * Get the word of the day from Words API, and then place the word record in a JavaFX Observable
+     * List.
+     *
+     * @param wordApi API that returns a word's information
+     * @param wordsApi API that returns a random word
+     * @param backingList A list of listeners for changes in objects
+     */
+    public static void addWordOfTheDay(WordApi wordApi, WordsApi wordsApi,
             ObservableList<WordRecord> backingList) {
         if (backingList == null) {
             throw new IllegalArgumentException("backingList is null");
@@ -80,9 +87,9 @@ public class SampleData {
     }
 
     /**
-     * Fill backing list with Word of the day and predefined sample words.
+     * Fill backing list with Word of the Day and predefined sample words.
      *
-     * @param backingList a list of word records that will be displayed
+     * @param backingList a list of Word Records
      */
     public static void fillSampleData(ObservableList<WordRecord> backingList) {
         try {

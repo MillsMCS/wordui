@@ -43,6 +43,14 @@ public class SampleData {
     }
 
     // TODO: Move to spring-swagger-wordnik-client
+    /**
+     * Returns yearly frequency of the word.
+     * 
+     * @param wordApi the API
+     * @param word the word for frequency
+     * @param year the year for frequency
+     * @return frequency of word
+     */
     @VisibleForTesting
     protected static int getFrequencyByYear(WordApi wordApi, String word, int year) {
         FrequencySummary fs = wordApi.getWordFrequency(word, "false", year, year);

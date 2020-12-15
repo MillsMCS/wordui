@@ -1,0 +1,1 @@
+memberSearchIndex = [{"p":"edu.mills.cs180a.wordui.model","c":"SampleData","l":"fillSampleData(ObservableList<WordRecord>)","u":"fillSampleData(javafx.collections.ObservableList)"},{"p":"edu.mills.cs180a.wordui.model","c":"SampleData","l":"SampleData()","u":"%3Cinit%3E()"}];updateSearchResults();

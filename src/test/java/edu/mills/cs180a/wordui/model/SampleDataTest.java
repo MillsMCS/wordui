@@ -63,7 +63,7 @@ class SampleDataTest {
     }
 
     @Test
-    void getWordOfTheDay() {
+    void getWordOfTheDay_EqualsWordRecord_MockWordsObject() {
         WordOfTheDay wordToday = SampleData.getWordOfTheDay(mockWordsApi);
         assertEquals(wordToday.getWord(), "jingle");
         List<Object> getDefList = List.of(Map.of("text", WORD_DEFS.get(0)));

@@ -12,9 +12,21 @@ import edu.mills.cs180a.wordnik.client.model.FrequencySummary;
 import edu.mills.cs180a.wordnik.client.model.WordOfTheDay;
 import javafx.collections.ObservableList;
 
+/**
+ * Creates sample date for mocking api.
+ * 
+ * @author obna
+ *
+ */
 public class SampleData {
+    /**
+     * String key for the count.
+     */
     @VisibleForTesting
     protected static final String FREQ_COUNT_KEY = "count";
+    /**
+     * String key for the frequency.
+     */
     @VisibleForTesting
     protected static final String FREQ_YEAR_KEY = "year";
     private static final int FREQ_YEAR = 2012;
@@ -65,6 +77,12 @@ public class SampleData {
                 definition.get("text").toString());
     }
 
+    /**
+     * Gets a word of the day object.
+     * 
+     * @param wordsApi the words Api
+     * @return the word word of the day
+     */
     @VisibleForTesting
     protected static WordOfTheDay getWordOfTheDay(WordsApi wordsApi) {
         return wordsApi.getWordOfTheDay();
@@ -94,11 +112,11 @@ public class SampleData {
     }
 
     /**
-     * 
      * Adds a word to the backingList.
      * 
      * @param backingList the list of word records
-     * @param wordsApi the API
+     * @param wordsApi the words API
+     * @param wordApi the word API
      */
     @VisibleForTesting
     protected static void addWordOfTheDay(ObservableList<WordRecord> backingList,

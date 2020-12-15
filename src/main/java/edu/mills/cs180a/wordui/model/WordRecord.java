@@ -7,6 +7,12 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
+/**
+ * Creates a word record
+ * 
+ * @author obna
+ *
+ */
 public class WordRecord {
     /*
      * private static Comparator<WordRecord> azComparator = new Comparator<WordRecord>() {

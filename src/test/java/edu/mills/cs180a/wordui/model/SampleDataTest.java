@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +16,8 @@ import edu.mills.cs180a.wordnik.client.api.WordApi;
 import edu.mills.cs180a.wordnik.client.api.WordsApi;
 import edu.mills.cs180a.wordnik.client.model.FrequencySummary;
 import edu.mills.cs180a.wordnik.client.model.WordOfTheDay;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 
 class SampleDataTest {
@@ -31,11 +34,15 @@ class SampleDataTest {
             "orange",
             makeFreqSummary(List.of(
                     makeMap(2000, 774),
-                    makeMap(2001, 941))));
+                    makeMap(2001, 941))),
+            aWord,
+            makeFreqSummary(List.of(
+                    makeMap(2020, 187))));
     private static final List<Object> WORD_DEFS = List.of(
             "def for jingle");
     private static final List<Object> DEF_LIST_MAP = List.of(Map.of(
             "text", WORD_DEFS.get(0)));
+
 
 
     @BeforeEach
@@ -48,6 +55,20 @@ class SampleDataTest {
                 .thenReturn(aWord);
         when(TODAYSWORD.getDefinitions())
                 .thenReturn(DEF_LIST_MAP);
+    }
+
+    @Test
+    void addWordOfTheDay_EqualsWordRecord_MockWordsObject() {
+        List<WordRecord> testList = new ArrayList();
+        ObservableList<WordRecord> testListRecord = FXCollections.observableList(testList);
+        SampleData.addWordOfTheDay(testListRecord, mockWordsApi, mockWordApi);
+
+        WordOfTheDay wordToday = SampleData.getWordOfTheDay(mockWordsApi);
+        assertEquals(wordToday.getWord(), "jingle");
+        List<Object> getDefList = List.of(Map.of("text", WORD_DEFS.get(0)));
+        assertEquals(wordToday.getDefinitions(), getDefList);
+
+        assertEquals(1, testListRecord.size());
     }
 
     private static FrequencySummary makeFreqSummary(List<Object> freqs) {

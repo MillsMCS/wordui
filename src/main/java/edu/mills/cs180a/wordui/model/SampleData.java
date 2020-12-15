@@ -49,8 +49,8 @@ public class SampleData {
         return getFrequencyFromSummary(fs, year);
     }
 
-    private static WordRecord buildWordRecord(String word, Map<Object, Object> definition) {
-        WordApi wordApi = client.buildClient(WordApi.class);
+    private static WordRecord buildWordRecord(String word, Map<Object, Object> definition,
+            WordApi wordApi) {
         return new WordRecord(
                 word,
                 getFrequencyByYear(wordApi, word, FREQ_YEAR),
@@ -62,25 +62,17 @@ public class SampleData {
         return wordsApi.getWordOfTheDay();
     }
 
-    // private static WordsApi getWord()
     /**
+     * Adds word records to the javafx gui.
      * 
-     * @param backingList
+     * @param backingList the list of word records
      */
     public static void fillSampleData(ObservableList<WordRecord> backingList) {
         try {
             client = ApiClientHelper.getApiClient();
             WordsApi wordsApi = client.buildClient(WordsApi.class);
-            WordOfTheDay word = getWordOfTheDay(wordsApi);
-            List<Object> definitions = word.getDefinitions();
-            if (definitions != null && !definitions.isEmpty()) {
-                Object definition = definitions.get(0);
-                if (definition instanceof Map) {
-                    @SuppressWarnings("unchecked")
-                    Map<Object, Object> definitionAsMap = (Map<Object, Object>) definition;
-                    backingList.add(buildWordRecord(word.getWord(), definitionAsMap));
-                }
-            }
+            WordApi wordApi = client.buildClient(WordApi.class);
+            addWordOfTheDay(backingList, wordsApi, wordApi);
         } catch (IOException e) {
             System.err.println("Unable to get API key.");
         }
@@ -91,5 +83,28 @@ public class SampleData {
                 179, "An island of Indonesia in the Malay Archipelago"));
         backingList.add(new WordRecord("random",
                 794, "Having no specific pattern, purpose, or objective"));
+    }
+
+    /**
+     * 
+     * Adds a word to the backingList.
+     * 
+     * @param backingList the list of word records
+     * @param wordsApi the API
+     */
+    @VisibleForTesting
+    protected static void addWordOfTheDay(ObservableList<WordRecord> backingList,
+            WordsApi wordsApi, WordApi wordApi) {
+        WordOfTheDay word = getWordOfTheDay(wordsApi);
+
+        List<Object> definitions = word.getDefinitions();
+        if (definitions != null && !definitions.isEmpty()) {
+            Object definition = definitions.get(0);
+            if (definition instanceof Map) {
+                @SuppressWarnings("unchecked")
+                Map<Object, Object> definitionAsMap = (Map<Object, Object>) definition;
+                backingList.add(buildWordRecord(word.getWord(), definitionAsMap, wordApi));
+            }
+        }
     }
 }

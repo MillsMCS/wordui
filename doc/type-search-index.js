@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes","u":"allclasses-index.html"},{"p":"edu.mills.cs180a.wordui","l":"FXMLController"},{"p":"edu.mills.cs180a.wordui.model","l":"SampleData"},{"p":"edu.mills.cs180a.wordui.model","l":"WordRecord.SortOrder"},{"p":"edu.mills.cs180a.wordui.model","l":"WordRecord"},{"p":"edu.mills.cs180a.wordui","l":"WordUI"}];updateSearchResults();

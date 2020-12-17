@@ -62,7 +62,7 @@ public class SampleData {
     }
 
     /**
-     * Get the word of the day from Words API, and then place the word record in a JavaFX Observable
+     * Get the Word of the Day from Words API, and then place the Word Record in a JavaFX Observable
      * List.
      *
      * @param wordApi API that returns a word's information

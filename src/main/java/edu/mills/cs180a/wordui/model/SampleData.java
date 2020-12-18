@@ -32,8 +32,8 @@ public class SampleData {
                     Map<String, Object> m = (Map<String, Object>) map;
 
                     if (m.containsKey(FREQ_YEAR_KEY)
-                            && Integer.parseInt(m.get(FREQ_YEAR_KEY).toString()) == year
-                            && m.containsKey(FREQ_COUNT_KEY)) {
+                    && Integer.parseInt(m.get(FREQ_YEAR_KEY).toString()) == year
+                    && m.containsKey(FREQ_COUNT_KEY)) {
                         return Integer.parseInt(m.get(FREQ_COUNT_KEY).toString());
                     }
                 }
@@ -49,19 +49,29 @@ public class SampleData {
         return getFrequencyFromSummary(fs, year);
     }
 
+    @VisibleForTesting
+    protected static WordOfTheDay getWordOfTheDay(WordsApi wordsApi) {
+        return wordsApi.getWordOfTheDay();
+    }
+
     private static WordRecord buildWordRecord(String word, Map<Object, Object> definition) {
         WordApi wordApi = client.buildClient(WordApi.class);
         return new WordRecord(
-                word,
-                getFrequencyByYear(wordApi, word, FREQ_YEAR),
-                definition.get("text").toString());
+        word,
+        getFrequencyByYear(wordApi, word, FREQ_YEAR),
+        definition.get("text").toString());
     }
 
+    /**
+     * Populates the list of word records, including Wordnik's word of the day.
+     * 
+     * @param backingList the list of word records to be populated
+     */
     public static void fillSampleData(ObservableList<WordRecord> backingList) {
         try {
             client = ApiClientHelper.getApiClient();
             WordsApi wordsApi = client.buildClient(WordsApi.class);
-            WordOfTheDay word = wordsApi.getWordOfTheDay();
+            WordOfTheDay word = getWordOfTheDay(wordsApi);
             List<Object> definitions = word.getDefinitions();
             if (definitions != null && !definitions.isEmpty()) {
                 Object definition = definitions.get(0);
@@ -78,8 +88,8 @@ public class SampleData {
         backingList.add(new WordRecord("buffalo", 5153, "The North American bison."));
         backingList.add(new WordRecord("school", 23736, "A large group of aquatic animals."));
         backingList.add(new WordRecord("Java",
-                179, "An island of Indonesia in the Malay Archipelago"));
+        179, "An island of Indonesia in the Malay Archipelago"));
         backingList.add(new WordRecord("random",
-                794, "Having no specific pattern, purpose, or objective"));
+        794, "Having no specific pattern, purpose, or objective"));
     }
 }

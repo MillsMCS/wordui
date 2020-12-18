@@ -18,7 +18,8 @@ public class SampleData {
     @VisibleForTesting
     protected static final String FREQ_YEAR_KEY = "year";
     private static final int FREQ_YEAR = 2012;
-    private static ApiClient client; // set in fillSampleData()
+    @VisibleForTesting
+    protected static ApiClient client; // set in fillSampleData()
 
     private static int getFrequencyFromSummary(FrequencySummary fs, int year) {
         List<Object> freqObjects = fs.getFrequency();
@@ -41,6 +42,11 @@ public class SampleData {
         }
         return 0;
     }
+    
+    @VisibleForTesting
+    protected static WordOfTheDay getWordOfTheDay(WordsApi wordsApi) {
+    	return wordsApi.getWordOfTheDay();
+    }
 
     // TODO: Move to spring-swagger-wordnik-client
     @VisibleForTesting
@@ -49,28 +55,46 @@ public class SampleData {
         return getFrequencyFromSummary(fs, year);
     }
 
-    private static WordRecord buildWordRecord(String word, Map<Object, Object> definition) {
+    @VisibleForTesting
+    protected static WordRecord buildWordRecord(String word, Map<Object, Object> definition) {
         WordApi wordApi = client.buildClient(WordApi.class);
         return new WordRecord(
                 word,
                 getFrequencyByYear(wordApi, word, FREQ_YEAR),
                 definition.get("text").toString());
     }
+    
+    /***
+     * Adds the current word of the day to a given list of words.
+     * 
+     * @param backingList a list to which the word of the day will be added
+     * @param word today's wordnik Word of the Day
+     */
+    @VisibleForTesting
+    protected static void addWordOfTheDay(List<WordRecord> backingList, WordOfTheDay word) {
+        List<Object> definitions = word.getDefinitions();
+        if (definitions != null && !definitions.isEmpty()) {
+            Object definition = definitions.get(0);
+            if (definition instanceof Map) {
+                @SuppressWarnings("unchecked")
+                Map<Object, Object> definitionAsMap = (Map<Object, Object>) definition;
+                backingList.add(buildWordRecord(word.getWord(), definitionAsMap));
+            }
+        }
+    }
 
+    /***
+     * Populates a list of standard sample words along with the word of the day.
+     * 
+     * @param backingList a list of sample word records
+     */
     public static void fillSampleData(ObservableList<WordRecord> backingList) {
         try {
             client = ApiClientHelper.getApiClient();
             WordsApi wordsApi = client.buildClient(WordsApi.class);
-            WordOfTheDay word = wordsApi.getWordOfTheDay();
-            List<Object> definitions = word.getDefinitions();
-            if (definitions != null && !definitions.isEmpty()) {
-                Object definition = definitions.get(0);
-                if (definition instanceof Map) {
-                    @SuppressWarnings("unchecked")
-                    Map<Object, Object> definitionAsMap = (Map<Object, Object>) definition;
-                    backingList.add(buildWordRecord(word.getWord(), definitionAsMap));
-                }
-            }
+            WordOfTheDay word = getWordOfTheDay(wordsApi);
+            addWordOfTheDay(backingList, word);
+            
         } catch (IOException e) {
             System.err.println("Unable to get API key.");
         }

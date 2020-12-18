@@ -68,12 +68,12 @@ public class SampleData {
      * Adds the current word of the day to a given list of words.
      * 
      * @param backingList a list to which the word of the day will be added
-     * @param wordsApi the API used to get today's word of the day
+     * @param word today's wordnik Word of the Day
      */
     @VisibleForTesting
     protected static void addWordOfTheDay(List<WordRecord> backingList, WordOfTheDay word) {
         List<Object> definitions = word.getDefinitions();
-        if(definitions != null && !definitions.isEmpty()) {
+        if (definitions != null && !definitions.isEmpty()) {
             Object definition = definitions.get(0);
             if (definition instanceof Map) {
                 @SuppressWarnings("unchecked")
@@ -84,8 +84,7 @@ public class SampleData {
     }
 
     /***
-     * Creates a list of standard sample words and their definitions along
-     * with the word of the day. Implements the wordnik API.
+     * Populates a list of standard sample words along with the word of the day.
      * 
      * @param backingList a list of sample word records
      */
@@ -94,8 +93,6 @@ public class SampleData {
             client = ApiClientHelper.getApiClient();
             WordsApi wordsApi = client.buildClient(WordsApi.class);
             WordOfTheDay word = getWordOfTheDay(wordsApi);
-            System.out.println("word (wotd): " + word.getWord());
-            System.out.println("defs: " + word.getDefinitions());
             addWordOfTheDay(backingList, word);
             
         } catch (IOException e) {

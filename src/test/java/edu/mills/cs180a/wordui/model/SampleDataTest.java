@@ -27,13 +27,14 @@ class SampleDataTest {
     
     private final WordsApi mockWordsApi = mock(WordsApi.class);
     private static final WordOfTheDay WORD_TODAY = makeWordOfTheDay();
+    private LinkedList<WordRecord> backingList = new LinkedList<>();
     private static final Map<Object, Object> DEFINITION_TODAY= Map.of(
             "source", "wordnik",
             "text", "An elongated curved fruit that grows in bunches.",
             "note", "this is a note",
             "partOfSpeech", "noun"
             );
-    private static final List<Object> DEFINITIONS_TODAY = makeDefinitions(DEFINITION_TODAY);
+    private static final List<Object> DEFINITIONS_TODAY = List.of(DEFINITION_TODAY);
     
     private final ApiClient mockApiClient = mock(ApiClient.class);
 
@@ -45,6 +46,7 @@ class SampleDataTest {
         		.thenReturn(WORD_TODAY);
         when(mockWordsApi.getWordOfTheDay().getDefinitions())
                 .thenReturn(DEFINITIONS_TODAY);
+        
     }
 
     private static Map<Object, Object> makeMap(int year, int count) {
@@ -63,12 +65,6 @@ class SampleDataTest {
     	when(wotd.getWord()).thenReturn("banana");
     	return wotd;
     }
-    
-    private static List<Object> makeDefinitions(Map<Object,Object> definition) {
-        List<Object> defList = new LinkedList<Object>();
-        defList.add(definition);
-        return defList;
-    }
 
     @ParameterizedTest
     @CsvSource({"apple,2000,339", "apple,2001,464", "apple,2020,0", "orange,2000,774",
@@ -79,30 +75,26 @@ class SampleDataTest {
     
     @Test
     void getWordOfTheDay_True_mockedWord() {
-    	assertEquals("banana", SampleData.getWordOfTheDay(mockWordsApi).getWord());
-    }
-    
-    @Test
-    void getDefinition_True_mockedDefinition() {
         List<Object> definitions = SampleData.getWordOfTheDay(mockWordsApi).getDefinitions();
         Object definition = definitions.get(0);
         @SuppressWarnings("unchecked")
         Map<Object,Object> definitionAsMap = (Map <Object,Object>) definition;
         
-        assertEquals("An elongated curved fruit that grows in bunches.",definitionAsMap.get("text"));
+    	assertEquals("banana", SampleData.getWordOfTheDay(mockWordsApi).getWord());
+    	assertEquals("An elongated curved fruit that grows in bunches.",definitionAsMap.get("text"));
     }
     
     @Test
     void addWordOfTheDay_True_wordOfTheDayAdded() {
         SampleData.client = mockApiClient;
         when(SampleData.client.buildClient(WordApi.class)).thenReturn(mockWordApi);
+        WordOfTheDay wotd = SampleData.getWordOfTheDay(mockWordsApi);
+        SampleData.addWordOfTheDay(backingList, wotd);
         
-        LinkedList<WordRecord> backingList = new LinkedList<>();
-        WordOfTheDay banana = SampleData.getWordOfTheDay(mockWordsApi);
-        SampleData.addWordOfTheDay(backingList, banana);
-        
+        assertEquals(1, backingList.size());
         assertEquals("banana", backingList.get(0).getWord().toString());
-        assertEquals(backingList.size(), 1);
+        assertEquals(589, SampleData.getFrequencyByYear(mockWordApi, wotd.getWord(), 2000));
+        assertEquals(782, SampleData.getFrequencyByYear(mockWordApi, wotd.getWord(), 2001));
     }
   
 }

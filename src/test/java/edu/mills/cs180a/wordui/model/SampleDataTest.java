@@ -59,8 +59,8 @@ class SampleDataTest {
 	}
 
 	@ParameterizedTest
-	@CsvSource({ "dog, 2000, 12", "dog, 2020, 34", "apple,2000,339", "apple,2001,464", "apple,2020,0", "orange,2000,774", "orange,2001,941",
-			"orange,2050,0" })
+	@CsvSource({ "dog, 2000, 12", "dog, 2020, 34", "apple,2000,339", "apple,2001,464", "apple,2020,0",
+			"orange,2000,774", "orange,2001,941", "orange,2050,0" })
 	void testGetFrequencyFromSummary(String word, int year, int count) {
 		assertEquals(count, SampleData.getFrequencyByYear(mockWordApi, word, year));
 	}

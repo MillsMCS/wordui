@@ -56,7 +56,7 @@ public class SampleData {
 	}
 
 	/**
-	 * Fills a list of WordRecord objects.
+	 * Fills a list with the word of the day and four other words with respective definitions.
 	 * 
 	 * @param backingList the list of words and their definition
 	 * @throws IOException if unable to get API key
@@ -78,7 +78,7 @@ public class SampleData {
 	}
 
 	/**
-	 * Adds the word of the day to a list of WordRecord objects.
+	 * Adds the word to a list of words with their respective definitions.
 	 * 
 	 * @param backingList the list of words and their definition
 	 * @param word        the word of the day

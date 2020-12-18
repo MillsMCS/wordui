@@ -6,12 +6,12 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -55,24 +55,21 @@ class SampleDataTest {
 	}
 
 	private static List<Object> makeDefinitions(Map<Object, Object> definition) {
-		List<Object> list = new ArrayList<Object>();
-		list.add(definition);
-		return list;
+		return List.of(definition);
 	}
 
 	@ParameterizedTest
-	@CsvSource({ "apple,2000,339", "apple,2001,464", "apple,2020,0", "orange,2000,774", "orange,2001,941",
+	@CsvSource({ "dog, 2000, 12", "dog, 2020, 34", "apple,2000,339", "apple,2001,464", "apple,2020,0", "orange,2000,774", "orange,2001,941",
 			"orange,2050,0" })
 	void testGetFrequencyFromSummary(String word, int year, int count) {
 		assertEquals(count, SampleData.getFrequencyByYear(mockWordApi, word, year));
 	}
 
-	@ParameterizedTest
-	@CsvSource({ "dog" })
-	void testGetWordOfTheDay(String w) {
-		// System.out.println(SampleData.getWordOfTheDay(mockWordsApi).getWord());
+	@Test
+	void testGetWordOfTheDay() {
+		String w = "dog";
 		WordOfTheDay wotd = SampleData.getWordOfTheDay(mockWordsApi);
-		assertEquals(0, wotd.getWord().compareTo(w));
+		assertEquals(w, wotd.getWord());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -80,15 +77,8 @@ class SampleDataTest {
 	@CsvSource({ "source, my dog", "text, An animal you take on walks.", "note, best note ever", "PartOfSpeech, noun" })
 	void testGetDefinitions(String key, String value) {
 		WordOfTheDay wotd = SampleData.getWordOfTheDay(mockWordsApi);
-
-		/*
-		 * // Debug try { System.out.println("Definition: " + ((Map<String, String>)
-		 * wotd.getDefinitions().get(0)).get(key)); } catch (Exception e) {
-		 * System.out.println(e); }
-		 */
-
 		String returnValue = ((Map<String, String>) wotd.getDefinitions().get(0)).get(key);
-		assertEquals(0, returnValue.compareTo(value));
+		assertEquals(value, returnValue);
 	}
 
 	@ParameterizedTest
@@ -100,11 +90,8 @@ class SampleDataTest {
 		WordOfTheDay wotd = SampleData.getWordOfTheDay(mockWordsApi);
 		SampleData.addWordOfTheDay(list, wotd);
 
-		// Debug
-		// System.out.println("Add word: " + wotd.getWord());
-		// System.out.println("Add word:" + list.get(0).getWord());
-		assertEquals(0, s.compareTo(list.get(0).getWord()));
-		assertEquals(list.size(), 1);
+		assertEquals(s, list.get(0).getWord());
+		assertEquals(1, list.size());
 	}
 
 }

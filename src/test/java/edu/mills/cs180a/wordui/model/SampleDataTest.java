@@ -78,10 +78,10 @@ class SampleDataTest {
         List<Object> definitions = SampleData.getWordOfTheDay(mockWordsApi).getDefinitions();
         Object definition = definitions.get(0);
         @SuppressWarnings("unchecked")
-        Map<Object,Object> definitionAsMap = (Map <Object,Object>) definition;
+        Map<Object, Object> definitionAsMap = (Map <Object, Object>) definition;
         
     	assertEquals("banana", SampleData.getWordOfTheDay(mockWordsApi).getWord());
-    	assertEquals("An elongated curved fruit that grows in bunches.",definitionAsMap.get("text"));
+    	assertEquals("An elongated curved fruit that grows in bunches.", definitionAsMap.get("text"));
     }
     
     @Test

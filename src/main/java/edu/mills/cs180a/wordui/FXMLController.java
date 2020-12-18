@@ -44,7 +44,7 @@ public class FXMLController implements Initializable {
     private ListView<WordRecord> listView;
     @FXML
     private ChoiceBox<WordRecord.SortOrder> sortChoiceBox;
-
+    
     private final ObservableList<WordRecord> wordRecordList = FXCollections.observableArrayList();
 
     private WordRecord selectedWordRecord;

@@ -37,7 +37,7 @@ class SampleDataTest {
     		"PartOfSpeech", "noun");
     private static final List<Object> DEFINITIONS = makeDefinitions(DEFINITION);
     private static final String WORD = "dog";
-        
+    
     @BeforeEach
     void setup() {
         when(mockWordApi.getWordFrequency(anyString(), anyString(), anyInt(), anyInt()))

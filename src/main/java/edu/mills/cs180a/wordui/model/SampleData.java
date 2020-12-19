@@ -82,7 +82,7 @@ public class SampleData {
     }
 
     /**
-     * Adds a word to a list with its definitions.
+     * Adds a word and its definition to a list.
      * 
      * @param backingList the list that has a word added
      * @param word the word or the day to be added to the list

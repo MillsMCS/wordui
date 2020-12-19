@@ -64,7 +64,7 @@ class SampleDataTest {
     }
 
     @Test
-    void testGetWordOfTheDay() {
+    void getWordOfTheDay_True_MockWOTD() {
         String w = "dog";
         WordOfTheDay wotd = SampleData.getWordOfTheDay(mockWordsApi);
         assertEquals(w, wotd.getWord());
@@ -74,7 +74,7 @@ class SampleDataTest {
     @ParameterizedTest
     @CsvSource({"source, my dog", "text, An animal you take on walks.", "note, best note ever",
             "PartOfSpeech, noun"})
-    void testGetDefinitions(String key, String value) {
+    void getDefinitions_True_MockWOTD(String key, String value) {
         WordOfTheDay wotd = SampleData.getWordOfTheDay(mockWordsApi);
         String returnValue = ((Map<String, String>) wotd.getDefinitions().get(0)).get(key);
         assertEquals(value, returnValue);
@@ -82,7 +82,7 @@ class SampleDataTest {
 
     @ParameterizedTest
     @CsvSource({"dog"})
-    void testAddWordOfTheDay(String s) {
+    void addWordOfTheDay_True_MockWOTD(String s) {
         SampleData.client = mockApiClient;
         when(SampleData.client.buildClient(WordApi.class)).thenReturn(mockWordApi);
         LinkedList<WordRecord> list = new LinkedList<WordRecord>();

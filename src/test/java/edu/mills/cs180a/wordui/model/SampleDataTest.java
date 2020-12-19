@@ -64,10 +64,9 @@ class SampleDataTest {
     }
 
     @Test
-    void getWordOfTheDay_True_MockWOTD() {
-        String w = "dog";
+    void getWordOfTheDay_CorrectWord_MockWOTD() {
         WordOfTheDay wotd = SampleData.getWordOfTheDay(mockWordsApi);
-        assertEquals(w, wotd.getWord());
+        assertEquals(WORD, wotd.getWord());
     }
 
     @SuppressWarnings("unchecked")
@@ -80,17 +79,22 @@ class SampleDataTest {
         assertEquals(value, returnValue);
     }
 
-    @ParameterizedTest
-    @CsvSource({"dog"})
-    void addWordOfTheDay_True_MockWOTD(String s) {
+    @Test
+    void addWordOfTheDay_True_MockWOTD() {
         SampleData.client = mockApiClient;
         when(SampleData.client.buildClient(WordApi.class)).thenReturn(mockWordApi);
         LinkedList<WordRecord> list = new LinkedList<WordRecord>();
         WordOfTheDay wotd = SampleData.getWordOfTheDay(mockWordsApi);
         SampleData.addWordOfTheDay(list, wotd);
 
-        assertEquals(s, list.get(0).getWord());
-        assertEquals(1, list.size());
+        int listSize = 0;
+        String listWord = null;
+        if (!list.isEmpty()) {
+            listSize = list.size();
+            listWord = list.get(0).getWord();
+        }
+        assertEquals(WORD, listWord);
+        assertEquals(1, listSize);
     }
 
 }

@@ -60,7 +60,7 @@ public class SampleData {
     /**
      * Fills a list with the word of the day and four other words with respective definitions.
      * 
-     * @param backingList the list of words and their definition
+     * @param backingList the list to be filled
      * @throws IOException if unable to get API key
      */
     public static void fillSampleData(ObservableList<WordRecord> backingList) {
@@ -82,10 +82,10 @@ public class SampleData {
     }
 
     /**
-     * Adds the word to a list of words with their respective definitions.
+     * Adds a word to a list with its definitions.
      * 
-     * @param backingList the list of words and their definition
-     * @param word the word of the day
+     * @param backingList the list that has a word added
+     * @param word the word or the day to be added to the list
      */
     public static void addWordOfTheDay(List<WordRecord> backingList, WordOfTheDay word) {
         List<Object> definitions = word.getDefinitions();

@@ -18,8 +18,7 @@ public class SampleData {
     @VisibleForTesting
     protected static final String FREQ_YEAR_KEY = "year";
     private static final int FREQ_YEAR = 2012;
-    @VisibleForTesting
-    protected static ApiClient client; // set in fillSampleData()
+    private static ApiClient client;
 
     private static int getFrequencyFromSummary(FrequencySummary fs, int year) {
         List<Object> freqObjects = fs.getFrequency();
@@ -51,8 +50,9 @@ public class SampleData {
     }
 
     @VisibleForTesting
-    protected static WordRecord buildWordRecord(String word, Map<Object, Object> definition) {
-        WordApi wordApi = client.buildClient(WordApi.class);
+    protected static WordRecord buildWordRecord(String word, Map<Object, Object> definition,
+            ApiClient c) {
+        WordApi wordApi = c.buildClient(WordApi.class);
         return new WordRecord(word, getFrequencyByYear(wordApi, word, FREQ_YEAR),
                 definition.get("text").toString());
     }
@@ -68,7 +68,7 @@ public class SampleData {
             client = ApiClientHelper.getApiClient();
             WordsApi wordsApi = client.buildClient(WordsApi.class);
             WordOfTheDay word = getWordOfTheDay(wordsApi);
-            addWordOfTheDay(backingList, word);
+            addWordOfTheDay(backingList, word, client);
         } catch (IOException e) {
             System.err.println("Unable to get API key.");
         }
@@ -87,14 +87,15 @@ public class SampleData {
      * @param backingList the list that has a word added
      * @param word the word or the day to be added to the list
      */
-    public static void addWordOfTheDay(List<WordRecord> backingList, WordOfTheDay word) {
+    public static void addWordOfTheDay(List<WordRecord> backingList, WordOfTheDay word,
+            ApiClient c) {
         List<Object> definitions = word.getDefinitions();
         if (definitions != null && !definitions.isEmpty()) {
             Object definition = definitions.get(0);
             if (definition instanceof Map) {
                 @SuppressWarnings("unchecked")
                 Map<Object, Object> definitionAsMap = (Map<Object, Object>) definition;
-                backingList.add(buildWordRecord(word.getWord(), definitionAsMap));
+                backingList.add(buildWordRecord(word.getWord(), definitionAsMap, c));
             }
         }
     }

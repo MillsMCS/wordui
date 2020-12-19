@@ -24,13 +24,14 @@ class SampleDataTest {
     private final WordsApi mockWordsApi = mock(WordsApi.class);
     private final ApiClient mockApiClient = mock(ApiClient.class);
     private static final Map<String, FrequencySummary> FREQS_MAP = Map.of("dog",
-            makeFrequencySummary(List.of(makeMap(2000, 12), makeMap(2020, 34))), "apple",
-            makeFrequencySummary(List.of(makeMap(2000, 339), makeMap(2001, 464))), "orange",
-            makeFrequencySummary(List.of(makeMap(2000, 774), makeMap(2001, 941))));
+            makeFrequencySummary(List.of(makeMap(2000, 12), makeMap(2020, 34), makeMap(2012, 1))),
+            "apple", makeFrequencySummary(List.of(makeMap(2000, 339), makeMap(2001, 464))),
+            "orange", makeFrequencySummary(List.of(makeMap(2000, 774), makeMap(2001, 941))));
     private static final Map<Object, Object> DEFINITION = Map.of("source", "my dog", "text",
             "An animal you take on walks.", "note", "best note ever", "PartOfSpeech", "noun");
     private static final List<Object> DEFINITIONS = makeDefinitions(DEFINITION);
     private static final String WORD = "dog";
+    private static final int YEAR = 2012;
 
     @BeforeEach
     void setup() {
@@ -39,6 +40,7 @@ class SampleDataTest {
         when(mockWordsApi.getWordOfTheDay()).thenReturn(mockWordOfTheDay);
         when(mockWordOfTheDay.getWord()).thenReturn(WORD);
         when(mockWordOfTheDay.getDefinitions()).thenReturn(DEFINITIONS);
+        when(mockApiClient.buildClient(WordApi.class)).thenReturn(mockWordApi);
     }
 
     private static Map<Object, Object> makeMap(int year, int count) {
@@ -81,17 +83,20 @@ class SampleDataTest {
 
     @Test
     void addWordOfTheDay_True_MockWOTD() {
-        SampleData.client = mockApiClient;
-        when(SampleData.client.buildClient(WordApi.class)).thenReturn(mockWordApi);
         LinkedList<WordRecord> list = new LinkedList<WordRecord>();
-        WordOfTheDay wotd = SampleData.getWordOfTheDay(mockWordsApi);
-        SampleData.addWordOfTheDay(list, wotd);
+        SampleData.addWordOfTheDay(list, mockWordsApi.getWordOfTheDay(), mockApiClient);
 
-        String listWord = null;
+        WordRecord wordRecord = null;
         if (!list.isEmpty()) {
-            listWord = list.get(0).getWord();
+            wordRecord = list.get(0);
         }
-        assertEquals(WORD, listWord);
+
+        String definition = (String) DEFINITION.get("text");
+        int frequency = SampleData.getFrequencyByYear(mockWordApi, WORD, YEAR);
+
+        assertEquals(WORD, wordRecord.getWord());
+        assertEquals(definition, wordRecord.getDefinition());
+        assertEquals(frequency, wordRecord.getFrequency());
         assertEquals(1, list.size());
     }
 

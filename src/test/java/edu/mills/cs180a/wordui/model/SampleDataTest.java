@@ -87,14 +87,12 @@ class SampleDataTest {
         WordOfTheDay wotd = SampleData.getWordOfTheDay(mockWordsApi);
         SampleData.addWordOfTheDay(list, wotd);
 
-        int listSize = 0;
         String listWord = null;
         if (!list.isEmpty()) {
-            listSize = list.size();
             listWord = list.get(0).getWord();
         }
         assertEquals(WORD, listWord);
-        assertEquals(1, listSize);
+        assertEquals(1, list.size());
     }
 
 }

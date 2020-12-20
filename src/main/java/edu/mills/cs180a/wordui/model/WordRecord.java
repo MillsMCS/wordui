@@ -24,10 +24,10 @@ public class WordRecord {
             (wr1, wr2) -> wr2.getFrequency().compareTo(wr1.getFrequency());
 
     public enum SortOrder {
-        ALPHABETICALLY_FORWARD("alphabetically (A-Z)", azComparator), ALPHABETICALLY_BACKWARD(
-                "alphabetically (Z-A)", zaComparator), BY_FREQ_ASCENDING(
-                        "by frequency (low to high)", increasingFreqComparator), BY_FREQ_DESCENDING(
-                                "by frequency (high to low)", decreasingFreqComparator);
+        ALPHABETICALLY_FORWARD("alphabetically (A-Z)", azComparator),
+        ALPHABETICALLY_BACKWARD("alphabetically (Z-A)", zaComparator),
+        BY_FREQ_ASCENDING("by frequency (low to high)", increasingFreqComparator),
+        BY_FREQ_DESCENDING("by frequency (high to low)", decreasingFreqComparator);
 
         private final String name;
         private final Comparator<WordRecord> comparator;

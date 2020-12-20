@@ -73,9 +73,9 @@ class SampleDataTest {
     @CsvSource({"source, my dog", "text, An animal you take on walks.", "note, best note ever",
             "PartOfSpeech, noun"})
     void getDefinitions_True_MockWOTD(String key, String value) {
-        WordOfTheDay wotd = SampleData.getWordOfTheDay(mockWordsApi);
-        String returnValue = ((Map<String, String>) wotd.getDefinitions().get(0)).get(key);
-        assertEquals(value, returnValue);
+        String definition =
+                ((Map<String, String>) mockWordOfTheDay.getDefinitions().get(0)).get(key);
+        assertEquals(value, definition);
     }
 
     @Test

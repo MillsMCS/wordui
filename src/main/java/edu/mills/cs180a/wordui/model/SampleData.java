@@ -51,8 +51,7 @@ public class SampleData {
 
     @VisibleForTesting
     protected static WordRecord buildWordRecord(String word, Map<Object, Object> definition,
-            ApiClient c) {
-        WordApi wordApi = c.buildClient(WordApi.class);
+            WordApi wordApi) {
         return new WordRecord(word, getFrequencyByYear(wordApi, word, FREQ_YEAR),
                 definition.get("text").toString());
     }
@@ -67,8 +66,8 @@ public class SampleData {
         try {
             client = ApiClientHelper.getApiClient();
             WordsApi wordsApi = client.buildClient(WordsApi.class);
-            WordOfTheDay word = getWordOfTheDay(wordsApi);
-            addWordOfTheDay(backingList, word, client);
+            WordApi wordApi = client.buildClient(WordApi.class);
+            addWordOfTheDay(backingList, wordApi, wordsApi);
         } catch (IOException e) {
             System.err.println("Unable to get API key.");
         }
@@ -85,17 +84,19 @@ public class SampleData {
      * Adds a word and its definition to a list.
      * 
      * @param backingList the list that has a word added
-     * @param word the word or the day to be added to the list
+     * @param wordApi the api used to get information about a word
+     * @param wordsApi the api used to get a word
      */
-    public static void addWordOfTheDay(List<WordRecord> backingList, WordOfTheDay word,
-            ApiClient c) {
+    public static void addWordOfTheDay(List<WordRecord> backingList, WordApi wordApi,
+            WordsApi wordsApi) {
+        WordOfTheDay word = getWordOfTheDay(wordsApi);
         List<Object> definitions = word.getDefinitions();
         if (definitions != null && !definitions.isEmpty()) {
             Object definition = definitions.get(0);
             if (definition instanceof Map) {
                 @SuppressWarnings("unchecked")
                 Map<Object, Object> definitionAsMap = (Map<Object, Object>) definition;
-                backingList.add(buildWordRecord(word.getWord(), definitionAsMap, c));
+                backingList.add(buildWordRecord(word.getWord(), definitionAsMap, wordApi));
             }
         }
     }

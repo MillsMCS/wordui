@@ -14,7 +14,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import edu.mills.cs180a.wordnik.client.api.WordApi;
 import edu.mills.cs180a.wordnik.client.api.WordsApi;
-import edu.mills.cs180a.wordnik.client.invoker.ApiClient;
 import edu.mills.cs180a.wordnik.client.model.FrequencySummary;
 import edu.mills.cs180a.wordnik.client.model.WordOfTheDay;
 
@@ -22,7 +21,6 @@ class SampleDataTest {
     private final WordApi mockWordApi = mock(WordApi.class);
     private final WordOfTheDay mockWordOfTheDay = mock(WordOfTheDay.class);
     private final WordsApi mockWordsApi = mock(WordsApi.class);
-    private final ApiClient mockApiClient = mock(ApiClient.class);
     private static final Map<String, FrequencySummary> FREQS_MAP = Map.of("dog",
             makeFrequencySummary(List.of(makeMap(2000, 12), makeMap(2020, 34), makeMap(2012, 1))),
             "apple", makeFrequencySummary(List.of(makeMap(2000, 339), makeMap(2001, 464))),
@@ -40,7 +38,6 @@ class SampleDataTest {
         when(mockWordsApi.getWordOfTheDay()).thenReturn(mockWordOfTheDay);
         when(mockWordOfTheDay.getWord()).thenReturn(WORD);
         when(mockWordOfTheDay.getDefinitions()).thenReturn(DEFINITIONS);
-        when(mockApiClient.buildClient(WordApi.class)).thenReturn(mockWordApi);
     }
 
     private static Map<Object, Object> makeMap(int year, int count) {
@@ -84,7 +81,7 @@ class SampleDataTest {
     @Test
     void addWordOfTheDay_True_MockWOTD() {
         LinkedList<WordRecord> list = new LinkedList<WordRecord>();
-        SampleData.addWordOfTheDay(list, mockWordsApi.getWordOfTheDay(), mockApiClient);
+        SampleData.addWordOfTheDay(list, mockWordApi, mockWordsApi);
 
         WordRecord wordRecord = null;
         if (!list.isEmpty()) {

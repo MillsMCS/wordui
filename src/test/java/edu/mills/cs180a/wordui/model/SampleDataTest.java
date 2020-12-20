@@ -30,6 +30,8 @@ class SampleDataTest {
     private static final List<Object> DEFINITIONS = makeDefinitions(DEFINITION);
     private static final String WORD = "dog";
     private static final int YEAR = 2012;
+    private static final int FREQ = 1;
+    private static final String DEFINITION_TEXT = "An animal you take on walks.";
 
     @BeforeEach
     void setup() {
@@ -73,8 +75,9 @@ class SampleDataTest {
     @CsvSource({"source, my dog", "text, An animal you take on walks.", "note, best note ever",
             "PartOfSpeech, noun"})
     void getDefinitions_True_MockWOTD(String key, String value) {
+        WordOfTheDay wotd = SampleData.getWordOfTheDay(mockWordsApi);
         String definition =
-                ((Map<String, String>) mockWordOfTheDay.getDefinitions().get(0)).get(key);
+                ((Map<String, String>) wotd.getDefinitions().get(0)).get(key);
         assertEquals(value, definition);
     }
 
@@ -83,18 +86,12 @@ class SampleDataTest {
         LinkedList<WordRecord> list = new LinkedList<WordRecord>();
         SampleData.addWordOfTheDay(list, mockWordApi, mockWordsApi);
 
-        WordRecord wordRecord = null;
         if (!list.isEmpty()) {
-            wordRecord = list.get(0);
+            WordRecord wordRecord = list.get(0);
+            assertEquals(WORD, wordRecord.getWord());
+            assertEquals(DEFINITION_TEXT, wordRecord.getDefinition());
+            assertEquals(FREQ, wordRecord.getFrequency());
         }
-
-        String definition = (String) DEFINITION.get("text");
-        int frequency = SampleData.getFrequencyByYear(mockWordApi, WORD, YEAR);
-
-        assertEquals(WORD, wordRecord.getWord());
-        assertEquals(definition, wordRecord.getDefinition());
-        assertEquals(frequency, wordRecord.getFrequency());
         assertEquals(1, list.size());
     }
-
 }

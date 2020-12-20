@@ -57,7 +57,7 @@ public class SampleData {
     }
 
     /**
-     * Fills a list with the word of the day and four other words with respective definitions.
+     * Fills a list with the word of the day and four other words with respective information.
      * 
      * @param backingList the list to be filled
      * @throws IOException if unable to get API key
@@ -81,7 +81,7 @@ public class SampleData {
     }
 
     /**
-     * Adds a word and its definition to a list.
+     * Adds a word and its information to a list.
      * 
      * @param backingList the list that has a word added
      * @param wordApi the api used to get information about a word

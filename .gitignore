@@ -62,4 +62,4 @@ local.properties
 api-key.txt
 
 # downloaded directions in case it disappeared from Canvas
-*.pages
+wordUi-Assignment.pages

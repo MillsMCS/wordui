@@ -54,20 +54,14 @@ public class SampleData {
         return wordsApi.getWordOfTheDay();
     }
 
-    private static WordRecord buildWordRecord(String word, Map<Object, Object> definition) {
-        WordApi wordApi = client.buildClient(WordApi.class);
-        return new WordRecord(
-        word,
-        getFrequencyByYear(wordApi, word, FREQ_YEAR),
-        definition.get("text").toString());
-    }
-
     /**
-     * Populates the list of word records, including Wordnik's word of the day.
+     * Downloads the Wordnik Word Of The Day and adds it to a list. This includes both the word and
+     * its first definition.
      * 
-     * @param backingList the list of word records to be populated
+     * @param the list to add the word to
+     * @return the list the word was added to
      */
-    public static void fillSampleData(ObservableList<WordRecord> backingList) {
+    public static ObservableList<WordRecord> addWordOfTheDay(ObservableList<WordRecord> backingList) {
         try {
             client = ApiClientHelper.getApiClient();
             WordsApi wordsApi = client.buildClient(WordsApi.class);
@@ -84,6 +78,25 @@ public class SampleData {
         } catch (IOException e) {
             System.err.println("Unable to get API key.");
         }
+
+        return backingList;
+    }
+
+    private static WordRecord buildWordRecord(String word, Map<Object, Object> definition) {
+        WordApi wordApi = client.buildClient(WordApi.class);
+        return new WordRecord(
+        word,
+        getFrequencyByYear(wordApi, word, FREQ_YEAR),
+        definition.get("text").toString());
+    }
+
+    /**
+     * Populates the list of word records, including Wordnik's word of the day.
+     * 
+     * @param backingList the list of word records to be populated
+     */
+    public static void fillSampleData(ObservableList<WordRecord> backingList) {
+        addWordOfTheDay(backingList);
 
         backingList.add(new WordRecord("buffalo", 5153, "The North American bison."));
         backingList.add(new WordRecord("school", 23736, "A large group of aquatic animals."));

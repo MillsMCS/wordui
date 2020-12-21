@@ -25,7 +25,7 @@ public class SampleData {
         // freqObjects is a List<Map> [{"year" = "2012", "count" = 179}] for "Java"
 
         if (freqObjects instanceof List) {
-            List<Object> maps = (List<Object>) freqObjects;
+            List<Object> maps = freqObjects;
             for (Object map : maps) {
                 if (map instanceof Map) {
                     @SuppressWarnings("unchecked")
@@ -57,11 +57,21 @@ public class SampleData {
                 definition.get("text").toString());
     }
 
+    private static WordOfTheDay getWordOfTheDay(WordsApi wordsApi) {
+        return wordsApi.getWordOfTheDay();
+    }
+
+    /**
+     * Adds sample data to {@link ObservableList}.
+     *
+     * @param backingList ObservableList to which to add sample {@link WordRecord}s
+     * @throws IOException if unable to get API key
+     */
     public static void fillSampleData(ObservableList<WordRecord> backingList) {
         try {
             client = ApiClientHelper.getApiClient();
             WordsApi wordsApi = client.buildClient(WordsApi.class);
-            WordOfTheDay word = wordsApi.getWordOfTheDay();
+            WordOfTheDay word = getWordOfTheDay(wordsApi);
             List<Object> definitions = word.getDefinitions();
             if (definitions != null && !definitions.isEmpty()) {
                 Object definition = definitions.get(0);

@@ -74,7 +74,7 @@ class SampleDataTest {
     @ParameterizedTest
     @CsvSource({"source, my dog", "text, An animal you take on walks.", "note, best note ever",
             "PartOfSpeech, noun"})
-    void getDefinitions_True_MockWOTD(String key, String value) {
+    void getWordOfTheDay_CorrectDefinition_MockWOTD(String key, String value) {
         WordOfTheDay wotd = SampleData.getWordOfTheDay(mockWordsApi);
         String definition =
                 ((Map<String, String>) wotd.getDefinitions().get(0)).get(key);

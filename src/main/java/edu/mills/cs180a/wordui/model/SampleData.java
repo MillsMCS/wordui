@@ -12,6 +12,12 @@ import edu.mills.cs180a.wordnik.client.model.FrequencySummary;
 import edu.mills.cs180a.wordnik.client.model.WordOfTheDay;
 import javafx.collections.ObservableList;
 
+/**
+ * A resource to process sample data.
+ *
+ * @author Ellen Spertus
+ * @author Zoe Abrams
+ */
 public class SampleData {
     @VisibleForTesting
     protected static final String FREQ_COUNT_KEY = "count";

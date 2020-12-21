@@ -1,6 +1,5 @@
 package edu.mills.cs180a.wordui.model;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import com.google.common.annotations.VisibleForTesting;
@@ -32,8 +31,8 @@ public class SampleData {
                     Map<String, Object> m = (Map<String, Object>) map;
 
                     if (m.containsKey(FREQ_YEAR_KEY)
-                    && Integer.parseInt(m.get(FREQ_YEAR_KEY).toString()) == year
-                    && m.containsKey(FREQ_COUNT_KEY)) {
+                            && Integer.parseInt(m.get(FREQ_YEAR_KEY).toString()) == year
+                            && m.containsKey(FREQ_COUNT_KEY)) {
                         return Integer.parseInt(m.get(FREQ_COUNT_KEY).toString());
                     }
                 }
@@ -42,7 +41,6 @@ public class SampleData {
         return 0;
     }
 
-    // TODO: Move to spring-swagger-wordnik-client
     @VisibleForTesting
     protected static int getFrequencyByYear(WordApi wordApi, String word, int year) {
         FrequencySummary fs = wordApi.getWordFrequency(word, "false", year, year);
@@ -55,54 +53,50 @@ public class SampleData {
     }
 
     /**
-     * Downloads the Wordnik Word Of The Day and adds it to a list. This includes both the word and
-     * its first definition.
+     * Downloads the Wordnik Word of the Day and adds it to a list.
      * 
      * @param the list to add the word to
      * @return the list the word was added to
      */
-    public static ObservableList<WordRecord> addWordOfTheDay(ObservableList<WordRecord> backingList) {
-        try {
-            client = ApiClientHelper.getApiClient();
-            WordsApi wordsApi = client.buildClient(WordsApi.class);
-            WordOfTheDay word = getWordOfTheDay(wordsApi);
-            List<Object> definitions = word.getDefinitions();
-            if (definitions != null && !definitions.isEmpty()) {
-                Object definition = definitions.get(0);
-                if (definition instanceof Map) {
-                    @SuppressWarnings("unchecked")
-                    Map<Object, Object> definitionAsMap = (Map<Object, Object>) definition;
-                    backingList.add(buildWordRecord(word.getWord(), definitionAsMap));
-                }
+    public static void addWordOfTheDay(ObservableList<WordRecord> backingList, WordsApi wordsApi, WordApi wordApi) {
+        WordOfTheDay word = getWordOfTheDay(wordsApi);
+        List<Object> definitions = word.getDefinitions();
+        if (definitions != null && !definitions.isEmpty()) {
+            Object definition = definitions.get(0);
+            if (definition instanceof Map) {
+                @SuppressWarnings("unchecked")
+                Map<Object, Object> definitionAsMap = (Map<Object, Object>) definition;
+                backingList.add(buildWordRecord(word.getWord(), definitionAsMap, wordApi)); // pass in API
             }
-        } catch (IOException e) {
-            System.err.println("Unable to get API key.");
         }
-
-        return backingList;
     }
 
-    private static WordRecord buildWordRecord(String word, Map<Object, Object> definition) {
-        WordApi wordApi = client.buildClient(WordApi.class);
-        return new WordRecord(
-        word,
-        getFrequencyByYear(wordApi, word, FREQ_YEAR),
-        definition.get("text").toString());
+    private static WordRecord buildWordRecord(String word, Map<Object, Object> definition, WordApi wordApi) {
+        return new WordRecord(word,
+                getFrequencyByYear(wordApi, word, FREQ_YEAR),
+                definition.get("text").toString());
     }
 
     /**
-     * Populates the list of word records, including Wordnik's word of the day.
+     * Populates the passed list, with sample words and Wordnik's Word of the Day.
      * 
-     * @param backingList the list of word records to be populated
+     * @param the list of word records to be populated
      */
     public static void fillSampleData(ObservableList<WordRecord> backingList) {
-        addWordOfTheDay(backingList);
+        try {
+            client = ApiClientHelper.getApiClient();
+            WordsApi wordsApi = client.buildClient(WordsApi.class);
+            WordApi wordApi = client.buildClient(WordApi.class);
+            addWordOfTheDay(backingList, wordsApi, wordApi);
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
 
         backingList.add(new WordRecord("buffalo", 5153, "The North American bison."));
         backingList.add(new WordRecord("school", 23736, "A large group of aquatic animals."));
         backingList.add(new WordRecord("Java",
-        179, "An island of Indonesia in the Malay Archipelago"));
+                179, "An island of Indonesia in the Malay Archipelago"));
         backingList.add(new WordRecord("random",
-        794, "Having no specific pattern, purpose, or objective"));
+                794, "Having no specific pattern, purpose, or objective"));
     }
 }

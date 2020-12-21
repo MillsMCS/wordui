@@ -22,15 +22,17 @@ import javafx.collections.ObservableList;
 class SampleDataTest {
     private final WordApi mockWordApi = mock(WordApi.class);
     private final WordsApi mockWordsApi = mock(WordsApi.class);
+    private static final String WORD_OF_THE_DAY = "yucca";
     private static final Map<String, FrequencySummary> FREQS_MAP = Map.of(
     "apple", makeFrequencySummary(List.of(makeMap(2000, 339), makeMap(2001, 464))),
-    "orange", makeFrequencySummary(List.of(makeMap(2000, 774), makeMap(2001, 941))));
+    "orange", makeFrequencySummary(List.of(makeMap(2000, 774), makeMap(2001, 941))),
+    WORD_OF_THE_DAY, makeFrequencySummary(List.of(makeMap(2020, 37), makeMap(2012, 57))));
     private static final String DEFINITION1 = "Definition #1";
     private static final String DEFINITION2 = "Definition #2";
     private static final String DEFINITION3 = "Definition #3";
     private static final String[] DEFINITION_ARRAY = new String[] {DEFINITION1, DEFINITION2, DEFINITION3};
     private static final List<Object> DEFINITIONS = makeDefinitions(DEFINITION_ARRAY);
-    private static final String WORD_OF_THE_DAY = "yucca";
+
 
     @BeforeEach
     void setup() {
@@ -52,6 +54,7 @@ class SampleDataTest {
         return Map.of("text", definition);
     }
 
+    // make var args for any number of definitions instead of array
     private static List<Object> makeDefinitions(String[] definitions) {
         List<Object> definitionList = new ArrayList<Object>();
         for (int i = 0; i < definitions.length; i++) {
@@ -66,9 +69,10 @@ class SampleDataTest {
         return fs;
     }
 
+    // add test for Yucca
     @ParameterizedTest
     @CsvSource({"apple,2000,339", "apple,2001,464", "apple,2020,0", "orange,2000,774",
-            "orange,2001,941", "orange,2050,0"})
+            "orange,2001,941", "orange,2050,0", "yucca,2020,37", "yucca,2012,57"})
     void testGetFrequencyFromSummary(String word, int year, int count) {
         assertEquals(count, SampleData.getFrequencyByYear(mockWordApi, word, year));
     }
@@ -93,7 +97,12 @@ class SampleDataTest {
     void testAddWordOfTheDay() {
         ObservableList<WordRecord> wordRecordList = FXCollections.observableArrayList();
         assertEquals(0, wordRecordList.size());
-        SampleData.addWordOfTheDay(wordRecordList);
+        SampleData.addWordOfTheDay(wordRecordList, mockWordsApi, mockWordApi);
         assertEquals(1, wordRecordList.size());
+
+        WordRecord wordRecord = wordRecordList.get(0);
+        assertEquals(WORD_OF_THE_DAY, wordRecord.getWord());
+        assertEquals(DEFINITION1, wordRecord.getDefinition());
+        assertEquals(57, wordRecord.getFrequency());
     }
 }

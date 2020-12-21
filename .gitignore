@@ -60,3 +60,6 @@ local.properties
 #.project
 /target/
 api-key.txt
+
+# downloaded directions in case it disappeared from Canvas
+*.pages

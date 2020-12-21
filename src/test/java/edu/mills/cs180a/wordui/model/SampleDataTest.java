@@ -16,6 +16,8 @@ import edu.mills.cs180a.wordnik.client.api.WordApi;
 import edu.mills.cs180a.wordnik.client.api.WordsApi;
 import edu.mills.cs180a.wordnik.client.model.FrequencySummary;
 import edu.mills.cs180a.wordnik.client.model.WordOfTheDay;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 class SampleDataTest {
     private final WordApi mockWordApi = mock(WordApi.class);
@@ -74,15 +76,24 @@ class SampleDataTest {
     @SuppressWarnings("unchecked")
     @Test
     void testGetWordOfTheDay() {
+        WordOfTheDay wordOfTheDay = SampleData.getWordOfTheDay(mockWordsApi);
 
-        Map<String, String> definition1 = (Map<String, String>) SampleData.getWordOfTheDay(mockWordsApi).getDefinitions().get(0);
-        Map<String, String> definition2 = (Map<String, String>) SampleData.getWordOfTheDay(mockWordsApi).getDefinitions().get(1);
-        Map<String, String> definition3 = (Map<String, String>) SampleData.getWordOfTheDay(mockWordsApi).getDefinitions().get(2);
+        Map<String, String> definition1 = (Map<String, String>) wordOfTheDay.getDefinitions().get(0);
+        Map<String, String> definition2 = (Map<String, String>) wordOfTheDay.getDefinitions().get(1);
+        Map<String, String> definition3 = (Map<String, String>) wordOfTheDay.getDefinitions().get(2);
 
-        assertEquals(WORD_OF_THE_DAY, SampleData.getWordOfTheDay(mockWordsApi).getWord());
-        assertEquals(DEFINITIONS, SampleData.getWordOfTheDay(mockWordsApi).getDefinitions());
+        assertEquals(WORD_OF_THE_DAY, wordOfTheDay.getWord());
+        assertEquals(DEFINITIONS, wordOfTheDay.getDefinitions());
         assertEquals(DEFINITION1, definition1.get("text").toString());
         assertEquals(DEFINITION2, definition2.get("text").toString());
         assertEquals(DEFINITION3, definition3.get("text").toString());
+    }
+
+    @Test
+    void testAddWordOfTheDay() {
+        ObservableList<WordRecord> wordRecordList = FXCollections.observableArrayList();
+        assertEquals(0, wordRecordList.size());
+        SampleData.addWordOfTheDay(wordRecordList);
+        assertEquals(1, wordRecordList.size());
     }
 }

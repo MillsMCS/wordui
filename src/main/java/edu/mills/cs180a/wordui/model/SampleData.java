@@ -12,12 +12,7 @@ import edu.mills.cs180a.wordnik.client.model.FrequencySummary;
 import edu.mills.cs180a.wordnik.client.model.WordOfTheDay;
 import javafx.collections.ObservableList;
 
-/**
- * Creates sample date for mocking api.
- * 
- * @author obna
- *
- */
+
 public class SampleData {
     /**
      * String key for the count.
@@ -34,8 +29,6 @@ public class SampleData {
 
     private static int getFrequencyFromSummary(FrequencySummary fs, int year) {
         List<Object> freqObjects = fs.getFrequency();
-        // freqObjects is a List<Map> [{"year" = "2012", "count" = 179}] for "Java"
-
         if (freqObjects instanceof List) {
             List<Object> maps = (List<Object>) freqObjects;
             for (Object map : maps) {
@@ -55,14 +48,7 @@ public class SampleData {
     }
 
     // TODO: Move to spring-swagger-wordnik-client
-    /**
-     * Returns yearly frequency of the word.
-     * 
-     * @param wordApi the API
-     * @param word the word for frequency
-     * @param year the year for frequency
-     * @return frequency of word
-     */
+
     @VisibleForTesting
     protected static int getFrequencyByYear(WordApi wordApi, String word, int year) {
         FrequencySummary fs = wordApi.getWordFrequency(word, "false", year, year);
@@ -80,8 +66,8 @@ public class SampleData {
     /**
      * Gets a word of the day object.
      * 
-     * @param wordsApi the words Api
-     * @return the word word of the day
+     * @param wordsApi the words API
+     * @return the word of the day
      */
     @VisibleForTesting
     protected static WordOfTheDay getWordOfTheDay(WordsApi wordsApi) {
@@ -89,7 +75,7 @@ public class SampleData {
     }
 
     /**
-     * Adds word records to the javafx gui.
+     * Adds word records to a passed list.
      * 
      * @param backingList the list of word records
      */
@@ -112,7 +98,7 @@ public class SampleData {
     }
 
     /**
-     * Adds a word to the backingList.
+     * Adds a word to the passed list.
      * 
      * @param backingList the list of word records
      * @param wordsApi the words API

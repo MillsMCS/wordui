@@ -24,8 +24,8 @@ class SampleDataTest {
     private final FrequencySummary mockFS = mock(FrequencySummary.class);
     private final WordApi mockWordApi = mock(WordApi.class);
     private final WordsApi mockWordsApi = mock(WordsApi.class);
-    private static final WordOfTheDay TODAYSWORD = mock(WordOfTheDay.class);
-    private static final String aWord = "jingle";
+    private static final WordOfTheDay TODAYS_WORD = mock(WordOfTheDay.class);
+    private static final String A_WORD = "jingle";
     private static final Map<String, FrequencySummary> FREQS_MAP = Map.of(
             "apple",
             makeFreqSummary(List.of(
@@ -35,11 +35,12 @@ class SampleDataTest {
             makeFreqSummary(List.of(
                     makeMap(2000, 774),
                     makeMap(2001, 941))),
-            aWord,
+            A_WORD,
             makeFreqSummary(List.of(
                     makeMap(2020, 187))));
-    private static final List<Object> WORD_DEFS = List.of(
-            "def for jingle");
+    private static final String TODAYS_DEF = "def for jingle";
+    private static final List<Object> WORD_DEFS = List.of(TODAYS_DEF);
+    private static final List<Object> DEF_LIST = List.of(Map.of("text", TODAYS_DEF));
     private static final List<Object> DEF_LIST_MAP = List.of(Map.of(
             "text", WORD_DEFS.get(0)));
 
@@ -50,25 +51,24 @@ class SampleDataTest {
         when(mockWordApi.getWordFrequency(anyString(), anyString(), anyInt(), anyInt()))
                 .thenAnswer(invocation -> FREQS_MAP.get(invocation.getArgument(0)));
         when(mockWordsApi.getWordOfTheDay())
-                .thenReturn(TODAYSWORD);
-        when(TODAYSWORD.getWord())
-                .thenReturn(aWord);
-        when(TODAYSWORD.getDefinitions())
+                .thenReturn(TODAYS_WORD);
+        when(TODAYS_WORD.getWord())
+                .thenReturn(A_WORD);
+        when(TODAYS_WORD.getDefinitions())
                 .thenReturn(DEF_LIST_MAP);
     }
 
     @Test
     void addWordOfTheDay_EqualsWordRecord_MockWordsObject() {
-        List<WordRecord> testList = new ArrayList();
+        List<WordRecord> testList = new ArrayList<>();
         ObservableList<WordRecord> testListRecord = FXCollections.observableList(testList);
         SampleData.addWordOfTheDay(testListRecord, mockWordsApi, mockWordApi);
 
         WordOfTheDay wordToday = SampleData.getWordOfTheDay(mockWordsApi);
-        assertEquals(wordToday.getWord(), "jingle");
-        List<Object> getDefList = List.of(Map.of("text", WORD_DEFS.get(0)));
-        assertEquals(wordToday.getDefinitions(), getDefList);
-
+        assertEquals("jingle", wordToday.getWord());
+        assertEquals(DEF_LIST, wordToday.getDefinitions());
         assertEquals(1, testListRecord.size());
+        assertEquals(187, SampleData.getFrequencyByYear(mockWordApi, A_WORD, 2020));
     }
 
     private static FrequencySummary makeFreqSummary(List<Object> freqs) {
@@ -86,9 +86,9 @@ class SampleDataTest {
     @Test
     void getWordOfTheDay_EqualsWordRecord_MockWordsObject() {
         WordOfTheDay wordToday = SampleData.getWordOfTheDay(mockWordsApi);
-        assertEquals(wordToday.getWord(), "jingle");
-        List<Object> getDefList = List.of(Map.of("text", WORD_DEFS.get(0)));
-        assertEquals(wordToday.getDefinitions(), getDefList);
+        assertEquals("jingle", wordToday.getWord());
+        assertEquals(DEF_LIST, wordToday.getDefinitions());
+        assertEquals(187, SampleData.getFrequencyByYear(mockWordApi, A_WORD, 2020));
     }
 
     @ParameterizedTest
@@ -98,9 +98,4 @@ class SampleDataTest {
         assertEquals(count, SampleData.getFrequencyByYear(mockWordApi, word, year));
     }
 
-    // @ParameterizedTest
-    // @CsvSource({})
-    // void testGetWordOfTheDay(String word) {
-    // assertTrue(getWordOfTheDay(mockWordsApi));
-    // }
 }

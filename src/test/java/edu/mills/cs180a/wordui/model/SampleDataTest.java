@@ -29,7 +29,6 @@ class SampleDataTest {
             "An animal you take on walks.", "note", "best note ever", "PartOfSpeech", "noun");
     private static final List<Object> DEFINITIONS = makeDefinitions(DEFINITION);
     private static final String WORD = "dog";
-    private static final int YEAR = 2012;
     private static final int FREQ = 1;
     private static final String DEFINITION_TEXT = "An animal you take on walks.";
 
@@ -64,34 +63,28 @@ class SampleDataTest {
         assertEquals(count, SampleData.getFrequencyByYear(mockWordApi, word, year));
     }
 
-    @Test
-    void getWordOfTheDay_CorrectWord_MockWOTD() {
-        WordOfTheDay wotd = SampleData.getWordOfTheDay(mockWordsApi);
-        assertEquals(WORD, wotd.getWord());
-    }
-
     @SuppressWarnings("unchecked")
     @ParameterizedTest
     @CsvSource({"source, my dog", "text, An animal you take on walks.", "note, best note ever",
             "PartOfSpeech, noun"})
-    void getWordOfTheDay_CorrectDefinition_MockWOTD(String key, String value) {
+    void getWordOfTheDay_CorrectWord_MockWOTD(String key, String value) {
         WordOfTheDay wotd = SampleData.getWordOfTheDay(mockWordsApi);
+        assertEquals(1, wotd.getDefinitions().size());
+        assertEquals(WORD, wotd.getWord());
         String definition =
                 ((Map<String, String>) wotd.getDefinitions().get(0)).get(key);
         assertEquals(value, definition);
     }
 
     @Test
-    void addWordOfTheDay_True_MockWOTD() {
+    void addWordOfTheDay_AddsCorrectWOTD_MockWOTD() {
         LinkedList<WordRecord> list = new LinkedList<WordRecord>();
         SampleData.addWordOfTheDay(list, mockWordApi, mockWordsApi);
 
-        if (!list.isEmpty()) {
-            WordRecord wordRecord = list.get(0);
-            assertEquals(WORD, wordRecord.getWord());
-            assertEquals(DEFINITION_TEXT, wordRecord.getDefinition());
-            assertEquals(FREQ, wordRecord.getFrequency());
-        }
         assertEquals(1, list.size());
+        WordRecord wordRecord = list.get(0);
+        assertEquals(WORD, wordRecord.getWord());
+        assertEquals(DEFINITION_TEXT, wordRecord.getDefinition());
+        assertEquals(FREQ, wordRecord.getFrequency());
     }
 }

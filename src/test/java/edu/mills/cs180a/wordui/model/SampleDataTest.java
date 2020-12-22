@@ -35,8 +35,9 @@ class SampleDataTest {
     private static final WordOfTheDay SAMPLE_WORD_OF_THE_DAY =
             makeWOD(SAMPLE_WORD_STRING, SAMPLE_WORD_DEF_LIST);
     private static final int SAMPLE_WORD_FREQ = 1;
+    private static final int SAMPLE_WORD_YEAR = 2012;
     private static final FrequencySummary SAMPLE_WORD_FREQ_SUMMARY =
-            makeFrequencySummary(List.of(makeFreqMap(2012, 1)));
+            makeFrequencySummary(List.of(makeFreqMap(SAMPLE_WORD_YEAR, SAMPLE_WORD_FREQ)));
     private static final Map<String, FrequencySummary> FREQS_MAP = Map.of("apple",
             makeFrequencySummary(List.of(makeFreqMap(2000, 339), makeFreqMap(2001, 464))), "orange",
             makeFrequencySummary(List.of(makeFreqMap(2000, 774), makeFreqMap(2001, 941))));
@@ -78,9 +79,14 @@ class SampleDataTest {
     @SuppressWarnings("unchecked")
     @Test
     void getWord_True_CorrectWordReturned() {
-        assertEquals(SAMPLE_WORD_STRING, SampleData.getWordOfTheDay(mockWordsApi).getWord());
-        assertEquals(SAMPLE_WORD_DEF, ((Map<Object, Object>) SampleData
-                .getWordOfTheDay(mockWordsApi).getDefinitions().get(0)).get("text").toString());
+        WordOfTheDay word = SampleData.getWordOfTheDay(mockWordsApi);
+        assertEquals(SAMPLE_WORD_STRING, word.getWord());
+        assertEquals(1, word.getDefinitions().size());
+        assertEquals(SAMPLE_WORD_DEF,
+                ((Map<Object, Object>) word.getDefinitions().get(0)).get("text").toString());
+        int freqNumOfWord =
+                SampleData.getFrequencyByYear(mockWordApi, word.getWord(), SAMPLE_WORD_YEAR);
+        assertEquals(SAMPLE_WORD_FREQ, freqNumOfWord);
     }
 
     @Test

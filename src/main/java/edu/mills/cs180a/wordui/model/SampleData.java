@@ -98,7 +98,7 @@ public class SampleData {
     }
 
     /**
-     * Adds a word to the passed list.
+     * Adds the word to the passed list.
      * 
      * @param backingList the list of word records
      * @param wordsApi the words API

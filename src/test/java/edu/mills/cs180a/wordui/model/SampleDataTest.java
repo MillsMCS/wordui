@@ -64,11 +64,10 @@ class SampleDataTest {
         ObservableList<WordRecord> testListRecord = FXCollections.observableList(testList);
         SampleData.addWordOfTheDay(testListRecord, mockWordsApi, mockWordApi);
 
-        WordOfTheDay wordToday = SampleData.getWordOfTheDay(mockWordsApi);
-        assertEquals("jingle", wordToday.getWord());
-        assertEquals(DEF_LIST, wordToday.getDefinitions());
+        assertEquals("jingle", TODAYS_WORD.getWord());
+        assertEquals(DEF_LIST, TODAYS_WORD.getDefinitions());
         assertEquals(1, testListRecord.size());
-        assertEquals(187, SampleData.getFrequencyByYear(mockWordApi, A_WORD, 2020));
+        assertEquals(187, SampleData.getFrequencyByYear(mockWordApi, TODAYS_WORD.getWord(), 2020));
     }
 
     private static FrequencySummary makeFreqSummary(List<Object> freqs) {
@@ -85,10 +84,9 @@ class SampleDataTest {
 
     @Test
     void getWordOfTheDay_EqualsWordRecord_MockWordsObject() {
-        WordOfTheDay wordToday = SampleData.getWordOfTheDay(mockWordsApi);
-        assertEquals("jingle", wordToday.getWord());
-        assertEquals(DEF_LIST, wordToday.getDefinitions());
-        assertEquals(187, SampleData.getFrequencyByYear(mockWordApi, A_WORD, 2020));
+        assertEquals("jingle", TODAYS_WORD.getWord());
+        assertEquals(DEF_LIST, TODAYS_WORD.getDefinitions());
+        assertEquals(187, SampleData.getFrequencyByYear(mockWordApi, TODAYS_WORD.getWord(), 2020));
     }
 
     @ParameterizedTest

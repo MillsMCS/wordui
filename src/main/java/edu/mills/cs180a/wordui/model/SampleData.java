@@ -68,9 +68,9 @@ public class SampleData {
     }
 
     /**
-     * Adds sample data to {@link ObservableList}.
+     * Adds sample data to the provided observable list.
      *
-     * @param backingList ObservableList to which to add sample {@link WordRecord}s
+     * @param backingList the list
      * @throws IOException if unable to get API key
      */
     public static void fillSampleData(ObservableList<WordRecord> backingList) {

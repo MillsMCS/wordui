@@ -91,7 +91,7 @@ public class SampleData {
     /**
      * Sets up client and gets word data with which to populate the data list.
      *
-     * @param backingList the observable list
+     * @param backingList the list
      * @throws IOException if client initialization fails
      */
     public static void addWordOfTheDay(ObservableList<WordRecord> backingList) throws IOException {

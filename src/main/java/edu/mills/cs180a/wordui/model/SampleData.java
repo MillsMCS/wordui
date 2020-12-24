@@ -82,14 +82,13 @@ public class SampleData {
             addWordOfTheDay(wordsApi, wordApi, backingList);
         } catch (IOException e) {
             System.err.println("Unable to get API key.");
-        } finally {
-            backingList.add(new WordRecord("buffalo", 5153, "The North American bison."));
-            backingList.add(new WordRecord("school", 23736, "A large group of aquatic animals."));
-            backingList.add(new WordRecord("Java",
-                    179, "An island of Indonesia in the Malay Archipelago"));
-            backingList.add(new WordRecord("random",
-                    794, "Having no specific pattern, purpose, or objective"));
         }
+        backingList.add(new WordRecord("buffalo", 5153, "The North American bison."));
+        backingList.add(new WordRecord("school", 23736, "A large group of aquatic animals."));
+        backingList.add(new WordRecord("Java",
+                179, "An island of Indonesia in the Malay Archipelago"));
+        backingList.add(new WordRecord("random",
+                794, "Having no specific pattern, purpose, or objective"));
     }
 
     /**

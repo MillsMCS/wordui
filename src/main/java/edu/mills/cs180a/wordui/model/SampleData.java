@@ -12,6 +12,12 @@ import edu.mills.cs180a.wordnik.client.model.FrequencySummary;
 import edu.mills.cs180a.wordnik.client.model.WordOfTheDay;
 import javafx.collections.ObservableList;
 
+/**
+ * A resource to process sample data.
+ *
+ * @author Ellen Spertus
+ * @author Zoe Abrams
+ */
 public class SampleData {
     @VisibleForTesting
     protected static final String FREQ_COUNT_KEY = "count";
@@ -25,7 +31,7 @@ public class SampleData {
         // freqObjects is a List<Map> [{"year" = "2012", "count" = 179}] for "Java"
 
         if (freqObjects instanceof List) {
-            List<Object> maps = (List<Object>) freqObjects;
+            List<Object> maps = freqObjects;
             for (Object map : maps) {
                 if (map instanceof Map) {
                     @SuppressWarnings("unchecked")
@@ -49,37 +55,59 @@ public class SampleData {
         return getFrequencyFromSummary(fs, year);
     }
 
-    private static WordRecord buildWordRecord(String word, Map<Object, Object> definition) {
-        WordApi wordApi = client.buildClient(WordApi.class);
+    private static WordRecord buildWordRecord(WordApi wordApi, String word,
+            Map<Object, Object> definition) {
         return new WordRecord(
                 word,
                 getFrequencyByYear(wordApi, word, FREQ_YEAR),
                 definition.get("text").toString());
     }
 
+    @VisibleForTesting
+    protected static WordOfTheDay getWordOfTheDay(WordsApi wordsApi) {
+        return wordsApi.getWordOfTheDay();
+    }
+
+    /**
+     * Adds sample data to the provided observable list.
+     *
+     * @param backingList the list
+     * @throws IOException if unable to get API key
+     */
     public static void fillSampleData(ObservableList<WordRecord> backingList) {
         try {
             client = ApiClientHelper.getApiClient();
             WordsApi wordsApi = client.buildClient(WordsApi.class);
-            WordOfTheDay word = wordsApi.getWordOfTheDay();
-            List<Object> definitions = word.getDefinitions();
-            if (definitions != null && !definitions.isEmpty()) {
-                Object definition = definitions.get(0);
-                if (definition instanceof Map) {
-                    @SuppressWarnings("unchecked")
-                    Map<Object, Object> definitionAsMap = (Map<Object, Object>) definition;
-                    backingList.add(buildWordRecord(word.getWord(), definitionAsMap));
-                }
-            }
+            WordApi wordApi = client.buildClient(WordApi.class);
+            addWordOfTheDay(wordsApi, wordApi, backingList);
         } catch (IOException e) {
             System.err.println("Unable to get API key.");
         }
-
         backingList.add(new WordRecord("buffalo", 5153, "The North American bison."));
         backingList.add(new WordRecord("school", 23736, "A large group of aquatic animals."));
         backingList.add(new WordRecord("Java",
                 179, "An island of Indonesia in the Malay Archipelago"));
         backingList.add(new WordRecord("random",
                 794, "Having no specific pattern, purpose, or objective"));
+    }
+
+    /**
+     * Adds a new word of the day to the list.
+     *
+     * @param backingList the list
+     */
+    public static void addWordOfTheDay(WordsApi wordsApi, WordApi wordApi,
+            ObservableList<WordRecord> backingList) {
+
+        WordOfTheDay word = getWordOfTheDay(wordsApi);
+        List<Object> definitions = word.getDefinitions();
+        if (definitions != null && !definitions.isEmpty()) {
+            Object definition = definitions.get(0);
+            if (definition instanceof Map) {
+                @SuppressWarnings("unchecked")
+                Map<Object, Object> definitionAsMap = (Map<Object, Object>) definition;
+                backingList.add(buildWordRecord(wordApi, word.getWord(), definitionAsMap));
+            }
+        }
     }
 }

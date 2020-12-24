@@ -63,7 +63,8 @@ public class SampleData {
                 definition.get("text").toString());
     }
 
-    private static WordOfTheDay getWordOfTheDay(WordsApi wordsApi) {
+    @VisibleForTesting
+    protected static WordOfTheDay getWordOfTheDay(WordsApi wordsApi) {
         return wordsApi.getWordOfTheDay();
     }
 
@@ -75,7 +76,9 @@ public class SampleData {
      */
     public static void fillSampleData(ObservableList<WordRecord> backingList) {
         try {
-            addWordOfTheDay(backingList);
+            client = ApiClientHelper.getApiClient();
+            WordsApi wordsApi = client.buildClient(WordsApi.class);
+            addWordOfTheDay(wordsApi, backingList);
         } catch (IOException e) {
             System.err.println("Unable to get API key.");
         } finally {
@@ -89,14 +92,12 @@ public class SampleData {
     }
 
     /**
-     * Sets up client and gets word data with which to populate the data list.
+     * Adds a new word of the day to the list.
      *
      * @param backingList the list
-     * @throws IOException if client initialization fails
      */
-    public static void addWordOfTheDay(ObservableList<WordRecord> backingList) throws IOException {
-        client = ApiClientHelper.getApiClient();
-        WordsApi wordsApi = client.buildClient(WordsApi.class);
+    public static void addWordOfTheDay(WordsApi wordsApi, ObservableList<WordRecord> backingList) {
+
         WordOfTheDay word = getWordOfTheDay(wordsApi);
         List<Object> definitions = word.getDefinitions();
         if (definitions != null && !definitions.isEmpty()) {

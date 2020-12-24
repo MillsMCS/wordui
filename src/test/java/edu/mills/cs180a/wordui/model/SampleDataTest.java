@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import java.io.IOException;
@@ -25,16 +24,6 @@ class SampleDataTest {
     private static final WordApi mockWordApi = mock(WordApi.class);
     private static final WordsApi mockWordsApi = mock(WordsApi.class);
 
-    private static final Map<Object, Object> DEF1 = Map.of("text", "a valid word",
-            "partOfSpeech", "adjective",
-            "source", "wiktionary",
-            "note", "null");
-
-    private static final Map<String, String> DEF2 = Map.of("text", "appropriate for use",
-            "partOfSpeech", "adjective",
-            "source", "wiktionary",
-            "note", "null");
-
     private static final WordOfTheDay WORD =
             makeWordOfTheDay("cromulent",
                     List.of(
@@ -47,17 +36,10 @@ class SampleDataTest {
                                     "source", "wiktionary",
                                     "note", "null")));
 
-    // makeWordOfTheDay("cromulent", List.of(DEF1, DEF2));
-    // makeWordOfTheDay("cromulent", List.of("a valid word", "appropriate for use"));
-
     private static final Map<String, FrequencySummary> FREQS_MAP = Map.of(
             "cromulent", makeFrequencySummary(List.of(makeMap(2000, 10), makeMap(2001, 20))),
             "apple", makeFrequencySummary(List.of(makeMap(2000, 339), makeMap(2001, 464))),
             "orange", makeFrequencySummary(List.of(makeMap(2000, 774), makeMap(2001, 941))));
-
-    // private static final WordRecord WORDRECORD = new WordRecord(WORD.getWord(),
-    // FREQS_MAP.get(0).getFrequency().get(0).get(2000),
-    // (String) WORD.getDefinitions().get(0).get("text"));
 
     @BeforeEach
     void setup() {
@@ -93,8 +75,16 @@ class SampleDataTest {
     }
 
     @Test
-    void testGetWordOfTheDayGetDefinitions() {
+    void testGetWordOfTheDayGetDefinitionInstanceofMap() {
         assertTrue(SampleData.getWordOfTheDay(mockWordsApi).getDefinitions().get(0) instanceof Map);
+    }
+
+    @Test
+    void testGetWordOfTheDayGetDefinition() {
+        @SuppressWarnings("unchecked")
+        Map<Object, Object> definitions = (Map<Object, Object>) SampleData
+                .getWordOfTheDay(mockWordsApi).getDefinitions().get(0);
+        assertEquals("a valid word", definitions.get("text"));
     }
 
     @Test
@@ -102,8 +92,7 @@ class SampleDataTest {
         ObservableList<WordRecord> list = FXCollections.observableArrayList(
                 new WordRecord("schoolbus", 23736, "A bus to take children to school."));
         assertEquals("schoolbus", list.get(0).getWord());
-        SampleData.addWordOfTheDay(mockWordsApi, list);
-        // SampleData.addWordOfTheDay(list);
+        SampleData.addWordOfTheDay(mockWordsApi, mockWordApi, list);
         assertEquals(2, list.size());
         assertEquals("cromulent", list.get(1).getWord());
     }

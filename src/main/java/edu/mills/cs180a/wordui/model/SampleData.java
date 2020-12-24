@@ -79,6 +79,7 @@ public class SampleData {
             client = ApiClientHelper.getApiClient();
             WordsApi wordsApi = client.buildClient(WordsApi.class);
             addWordOfTheDay(wordsApi, backingList);
+            // addWordOfTheDay(backingList);
         } catch (IOException e) {
             System.err.println("Unable to get API key.");
         } finally {
@@ -97,6 +98,10 @@ public class SampleData {
      * @param backingList the list
      */
     public static void addWordOfTheDay(WordsApi wordsApi, ObservableList<WordRecord> backingList) {
+        // public static void addWordOfTheDay(ObservableList<WordRecord> backingList) throws
+        // IOException {
+        // client = ApiClientHelper.getApiClient();
+        // WordsApi wordsApi = client.buildClient(WordsApi.class);
 
         WordOfTheDay word = getWordOfTheDay(wordsApi);
         List<Object> definitions = word.getDefinitions();

@@ -36,6 +36,8 @@ class SampleDataTest {
             makeWOD(SAMPLE_WORD_STRING, SAMPLE_WORD_DEF_LIST);
     private static final int SAMPLE_WORD_FREQ = 1;
     private static final int SAMPLE_WORD_YEAR = 2012;
+    private static final String SAMPLE_WORD_CSV = SAMPLE_WORD_STRING + "," + SAMPLE_WORD_YEAR
+            + "," + SAMPLE_WORD_FREQ;
     private static final FrequencySummary SAMPLE_WORD_FREQ_SUMMARY =
             makeFrequencySummary(List.of(makeFreqMap(SAMPLE_WORD_YEAR, SAMPLE_WORD_FREQ)));
     private static final Map<String, FrequencySummary> FREQS_MAP = Map.of("apple",
@@ -64,7 +66,7 @@ class SampleDataTest {
 
     @ParameterizedTest
     @CsvSource({"apple,2000,339", "apple,2001,464", "apple,2020,0", "orange,2000,774",
-            "orange,2001,941", "orange,2050,0"})
+            "orange,2001,941", "orange,2050,0", SAMPLE_WORD_CSV})
     void testGetFrequencyFromSummary(String word, int year, int count) {
         assertEquals(count, SampleData.getFrequencyByYear(mockWordApi, word, year));
     }
@@ -78,15 +80,12 @@ class SampleDataTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    void getWord_True_CorrectWordReturned() {
+    void getWordOfTheDay_True_CorrectWordReturned() {
         WordOfTheDay word = SampleData.getWordOfTheDay(mockWordsApi);
         assertEquals(SAMPLE_WORD_STRING, word.getWord());
         assertEquals(1, word.getDefinitions().size());
         assertEquals(SAMPLE_WORD_DEF,
                 ((Map<Object, Object>) word.getDefinitions().get(0)).get("text").toString());
-        int freqNumOfWord =
-                SampleData.getFrequencyByYear(mockWordApi, word.getWord(), SAMPLE_WORD_YEAR);
-        assertEquals(SAMPLE_WORD_FREQ, freqNumOfWord);
     }
 
     @Test
@@ -95,8 +94,9 @@ class SampleDataTest {
         assertEquals(0, backingList.size());
         SampleData.addWordOfTheDay(mockWordApi, mockWordsApi, backingList);
         assertEquals(1, backingList.size());
-        assertEquals(SAMPLE_WORD_STRING, backingList.get(0).getWord());
-        assertEquals(SAMPLE_WORD_DEF, backingList.get(0).getDefinition());
-        assertEquals(SAMPLE_WORD_FREQ, backingList.get(0).getFrequency());
+        WordRecord wordRecordFromList = backingList.get(0);
+        assertEquals(SAMPLE_WORD_STRING, wordRecordFromList.getWord());
+        assertEquals(SAMPLE_WORD_DEF, wordRecordFromList.getDefinition());
+        assertEquals(SAMPLE_WORD_FREQ, wordRecordFromList.getFrequency());
     }
 }

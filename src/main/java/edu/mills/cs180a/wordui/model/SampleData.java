@@ -65,8 +65,8 @@ public class SampleData {
      * Get the Word of the Day from Words API, and then place the Word Record in a JavaFX Observable
      * List.
      *
-     * @param wordApi returns a word's information
-     * @param wordsApi returns a random word
+     * @param wordApi api that returns a word's information
+     * @param wordsApi api that returns a random word
      * @param backingList a list
      */
     public static void addWordOfTheDay(WordApi wordApi, WordsApi wordsApi,

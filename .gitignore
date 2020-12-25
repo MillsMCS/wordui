@@ -60,3 +60,5 @@ local.properties
 #.project
 /target/
 api-key.txt
+
+*.log

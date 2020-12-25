@@ -18,7 +18,13 @@ public class SampleData {
     @VisibleForTesting
     protected static final String FREQ_YEAR_KEY = "year";
     private static final int FREQ_YEAR = 2012;
+    @VisibleForTesting
     private static ApiClient client; // set in fillSampleData()
+
+    @VisibleForTesting
+    protected static WordOfTheDay getWordOfTheDay(WordsApi wordsApi) {
+        return wordsApi.getWordOfTheDay();
+    }
 
     private static int getFrequencyFromSummary(FrequencySummary fs, int year) {
         List<Object> freqObjects = fs.getFrequency();
@@ -49,37 +55,57 @@ public class SampleData {
         return getFrequencyFromSummary(fs, year);
     }
 
-    private static WordRecord buildWordRecord(String word, Map<Object, Object> definition) {
-        WordApi wordApi = client.buildClient(WordApi.class);
-        return new WordRecord(
-                word,
-                getFrequencyByYear(wordApi, word, FREQ_YEAR),
+    private static WordRecord buildWordRecord(WordApi wordApi, String word,
+            Map<Object, Object> definition) {
+        return new WordRecord(word, getFrequencyByYear(wordApi, word, FREQ_YEAR),
                 definition.get("text").toString());
     }
 
+    /**
+     * Get the Word of the Day from Words API, and then place the Word Record in a JavaFX Observable
+     * List.
+     *
+     * @param wordApi api that returns a word's information
+     * @param wordsApi api that returns a random word
+     * @param backingList a list
+     */
+    public static void addWordOfTheDay(WordApi wordApi, WordsApi wordsApi,
+            ObservableList<WordRecord> backingList) {
+        if (backingList == null) {
+            throw new IllegalArgumentException("Backing List is null");
+        }
+        WordOfTheDay word = getWordOfTheDay(wordsApi);
+        List<Object> definitions = word.getDefinitions();
+        if (definitions != null && !definitions.isEmpty()) {
+            Object definition = definitions.get(0);
+            if (definition instanceof Map) {
+                @SuppressWarnings("unchecked")
+                Map<Object, Object> definitionAsMap = (Map<Object, Object>) definition;
+                backingList.add(buildWordRecord(wordApi, word.getWord(), definitionAsMap));
+            }
+        }
+    }
+
+    /**
+     * Fill backing list with Word of the Day and predefined sample words.
+     *
+     * @param backingList a list
+     */
     public static void fillSampleData(ObservableList<WordRecord> backingList) {
         try {
             client = ApiClientHelper.getApiClient();
+            WordApi wordApi = client.buildClient(WordApi.class);
             WordsApi wordsApi = client.buildClient(WordsApi.class);
-            WordOfTheDay word = wordsApi.getWordOfTheDay();
-            List<Object> definitions = word.getDefinitions();
-            if (definitions != null && !definitions.isEmpty()) {
-                Object definition = definitions.get(0);
-                if (definition instanceof Map) {
-                    @SuppressWarnings("unchecked")
-                    Map<Object, Object> definitionAsMap = (Map<Object, Object>) definition;
-                    backingList.add(buildWordRecord(word.getWord(), definitionAsMap));
-                }
-            }
+            addWordOfTheDay(wordApi, wordsApi, backingList);
         } catch (IOException e) {
             System.err.println("Unable to get API key.");
         }
 
         backingList.add(new WordRecord("buffalo", 5153, "The North American bison."));
         backingList.add(new WordRecord("school", 23736, "A large group of aquatic animals."));
-        backingList.add(new WordRecord("Java",
-                179, "An island of Indonesia in the Malay Archipelago"));
-        backingList.add(new WordRecord("random",
-                794, "Having no specific pattern, purpose, or objective"));
+        backingList.add(
+                new WordRecord("Java", 179, "An island of Indonesia in the Malay Archipelago"));
+        backingList.add(
+                new WordRecord("random", 794, "Having no specific pattern, purpose, or objective"));
     }
 }

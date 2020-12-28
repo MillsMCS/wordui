@@ -56,7 +56,6 @@ public class SampleData {
      * Downloads the Wordnik Word of the Day and adds it to a list.
      * 
      * @param the list to add the word to
-     * @return the list the word was added to
      */
     public static void addWordOfTheDay(ObservableList<WordRecord> backingList, WordsApi wordsApi, WordApi wordApi) {
         WordOfTheDay word = getWordOfTheDay(wordsApi);
@@ -78,9 +77,9 @@ public class SampleData {
     }
 
     /**
-     * Populates the passed list, with sample words and Wordnik's Word of the Day.
+     * Populates the passed list with sample words and Wordnik's Word of the Day.
      * 
-     * @param the list of word records to be populated
+     * @param the list to be populated
      */
     public static void fillSampleData(ObservableList<WordRecord> backingList) {
         try {

@@ -24,9 +24,9 @@ class SampleDataTest {
     private final WordsApi mockWordsApi = mock(WordsApi.class);
     private static final String WORD_OF_THE_DAY = "yucca";
     private static final Map<String, FrequencySummary> FREQS_MAP = Map.of(
-    "apple", makeFrequencySummary(List.of(makeMap(2000, 339), makeMap(2001, 464))),
-    "orange", makeFrequencySummary(List.of(makeMap(2000, 774), makeMap(2001, 941))),
-    WORD_OF_THE_DAY, makeFrequencySummary(List.of(makeMap(2020, 37), makeMap(2012, 57))));
+            "apple", makeFrequencySummary(List.of(makeMap(2000, 339), makeMap(2001, 464))),
+            "orange", makeFrequencySummary(List.of(makeMap(2000, 774), makeMap(2001, 941))),
+            WORD_OF_THE_DAY, makeFrequencySummary(List.of(makeMap(2020, 37), makeMap(2012, 57))));
     private static final String DEFINITION1 = "Definition #1";
     private static final String DEFINITION2 = "Definition #2";
     private static final String DEFINITION3 = "Definition #3";
@@ -37,7 +37,7 @@ class SampleDataTest {
     @BeforeEach
     void setup() {
         when(mockWordApi.getWordFrequency(anyString(), anyString(), anyInt(), anyInt()))
-        .thenAnswer(invocation -> FREQS_MAP.get(invocation.getArgument(0)));
+                .thenAnswer(invocation -> FREQS_MAP.get(invocation.getArgument(0)));
 
         WordOfTheDay mockWordOfTheDay = mock(WordOfTheDay.class);
         when(mockWordsApi.getWordOfTheDay()).thenReturn(mockWordOfTheDay);
@@ -47,14 +47,13 @@ class SampleDataTest {
 
     private static Map<Object, Object> makeMap(int year, int count) {
         return Map.of(SampleData.FREQ_YEAR_KEY, String.valueOf(year),
-        SampleData.FREQ_COUNT_KEY, count);
+                SampleData.FREQ_COUNT_KEY, count);
     }
 
     private static Map<Object, Object> makeDefinition(String definition) {
         return Map.of("text", definition);
     }
 
-    // make var args for any number of definitions instead of array
     private static List<Object> makeDefinitions(String[] definitions) {
         List<Object> definitionList = new ArrayList<Object>();
         for (int i = 0; i < definitions.length; i++) {
@@ -69,7 +68,6 @@ class SampleDataTest {
         return fs;
     }
 
-    // add test for Yucca
     @ParameterizedTest
     @CsvSource({"apple,2000,339", "apple,2001,464", "apple,2020,0", "orange,2000,774",
             "orange,2001,941", "orange,2050,0", "yucca,2020,37", "yucca,2012,57"})

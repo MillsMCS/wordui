@@ -1,5 +1,6 @@
 package edu.mills.cs180a.wordui.model;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import com.google.common.annotations.VisibleForTesting;
@@ -87,8 +88,8 @@ public class SampleData {
             WordsApi wordsApi = client.buildClient(WordsApi.class);
             WordApi wordApi = client.buildClient(WordApi.class);
             addWordOfTheDay(backingList, wordsApi, wordApi);
-        } catch (Exception ex) {
-            System.out.println(ex);
+        } catch (IOException ex) {
+            System.out.println("Probably couldn't access the API client: " + ex);
         }
 
         backingList.add(new WordRecord("buffalo", 5153, "The North American bison."));

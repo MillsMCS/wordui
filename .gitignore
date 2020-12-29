@@ -9,6 +9,7 @@ local.properties
 .settings/
 .loadpath
 .recommenders
+JavaDoc/
 
 # External tool builders
 .externalToolBuilders/
@@ -61,5 +62,4 @@ local.properties
 /target/
 api-key.txt
 
-# downloaded directions in case it disappeared from Canvas
-wordUi-Assignment.pages
+

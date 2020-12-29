@@ -9,6 +9,7 @@ local.properties
 .settings/
 .loadpath
 .recommenders
+JavaDoc/
 
 # External tool builders
 .externalToolBuilders/
@@ -60,3 +61,5 @@ local.properties
 #.project
 /target/
 api-key.txt
+
+

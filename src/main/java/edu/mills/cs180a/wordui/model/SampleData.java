@@ -42,37 +42,54 @@ public class SampleData {
         return 0;
     }
 
-    // TODO: Move to spring-swagger-wordnik-client
     @VisibleForTesting
     protected static int getFrequencyByYear(WordApi wordApi, String word, int year) {
         FrequencySummary fs = wordApi.getWordFrequency(word, "false", year, year);
         return getFrequencyFromSummary(fs, year);
     }
 
-    private static WordRecord buildWordRecord(String word, Map<Object, Object> definition) {
-        WordApi wordApi = client.buildClient(WordApi.class);
-        return new WordRecord(
-                word,
+    @VisibleForTesting
+    protected static WordOfTheDay getWordOfTheDay(WordsApi wordsApi) {
+        return wordsApi.getWordOfTheDay();
+    }
+
+    /**
+     * Downloads the Wordnik Word of the Day and adds it to a list.
+     * 
+     * @param the list to add the word to
+     */
+    public static void addWordOfTheDay(ObservableList<WordRecord> backingList, WordsApi wordsApi, WordApi wordApi) {
+        WordOfTheDay word = getWordOfTheDay(wordsApi);
+        List<Object> definitions = word.getDefinitions();
+        if (definitions != null && !definitions.isEmpty()) {
+            Object definition = definitions.get(0);
+            if (definition instanceof Map) {
+                @SuppressWarnings("unchecked")
+                Map<Object, Object> definitionAsMap = (Map<Object, Object>) definition;
+                backingList.add(buildWordRecord(word.getWord(), definitionAsMap, wordApi)); // pass in API
+            }
+        }
+    }
+
+    private static WordRecord buildWordRecord(String word, Map<Object, Object> definition, WordApi wordApi) {
+        return new WordRecord(word,
                 getFrequencyByYear(wordApi, word, FREQ_YEAR),
                 definition.get("text").toString());
     }
 
+    /**
+     * Populates the passed list with sample words and Wordnik's Word of the Day.
+     * 
+     * @param the list to be populated
+     */
     public static void fillSampleData(ObservableList<WordRecord> backingList) {
         try {
             client = ApiClientHelper.getApiClient();
             WordsApi wordsApi = client.buildClient(WordsApi.class);
-            WordOfTheDay word = wordsApi.getWordOfTheDay();
-            List<Object> definitions = word.getDefinitions();
-            if (definitions != null && !definitions.isEmpty()) {
-                Object definition = definitions.get(0);
-                if (definition instanceof Map) {
-                    @SuppressWarnings("unchecked")
-                    Map<Object, Object> definitionAsMap = (Map<Object, Object>) definition;
-                    backingList.add(buildWordRecord(word.getWord(), definitionAsMap));
-                }
-            }
-        } catch (IOException e) {
-            System.err.println("Unable to get API key.");
+            WordApi wordApi = client.buildClient(WordApi.class);
+            addWordOfTheDay(backingList, wordsApi, wordApi);
+        } catch (IOException ex) {
+            System.out.println("Probably couldn't access the API client: " + ex);
         }
 
         backingList.add(new WordRecord("buffalo", 5153, "The North American bison."));

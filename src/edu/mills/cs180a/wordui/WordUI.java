@@ -1,13 +1,11 @@
 package edu.mills.cs180a.wordui;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
+import java.io.*;
+import java.net.*;
+import javafx.application.*;
+import javafx.fxml.*;
+import javafx.scene.*;
+import javafx.stage.*;
 
 public class WordUI extends Application {
     @Override

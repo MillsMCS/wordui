@@ -7,5 +7,6 @@
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JavaFX 17"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/wordnik-client"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

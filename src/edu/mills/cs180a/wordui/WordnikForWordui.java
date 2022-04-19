@@ -8,7 +8,7 @@ import edu.mills.cs180a.wordnik.client.invoker.*;
 import edu.mills.cs180a.wordnik.client.model.*;
 import edu.mills.cs180a.wordui.model.*;
 
-public class WordnikClient {
+public class WordnikForWordui {
     private static final String FREQ_COUNT_KEY = "count";
     private static final String FREQ_YEAR_KEY = "year";
     private static final int FREQ_YEAR = 2012;
@@ -17,8 +17,9 @@ public class WordnikClient {
     private WordApi wordApi;
     private WordsApi wordsApi;
 
-    public WordnikClient() throws IOException {
-        client = new ApiClient("api_key", getApiKey());
+    public WordnikForWordui() throws IOException {
+        String key = getApiKey();
+        client = new ApiClient("api_key", key);
         wordApi = client.buildClient(WordApi.class);
         wordsApi = client.buildClient(WordsApi.class);
     }
@@ -28,8 +29,7 @@ public class WordnikClient {
     }
 
     private static String getResource(String filename) throws IOException {
-        try (InputStream is =
-                FXMLController.class.getResourceAsStream(filename)) {
+        try (InputStream is = WordnikForWordui.class.getResourceAsStream(filename)) {
             if (is == null) {
                 throw new IOException("Unable to open file " + filename);
             }
@@ -37,12 +37,8 @@ public class WordnikClient {
         }
     }
 
-    public int getFrequencyByYear(String word, int year) {
-        FrequencySummary freqSummary =
-                wordApi.getWordFrequency(word, "false", year, year);
-        List<Object> freqObjects = freqSummary.getFrequency();
-        // freqObjects is a List<Map> [{"year" = "2012", "count" = 179}] for "Java"
-
+    // VisibleForTesting
+    protected static int getFrequencyFromFreqObjects(List<Object> freqObjects, int year) {
         if (freqObjects instanceof List) {
             List<Object> maps = (List<Object>) freqObjects;
             for (Object map : maps) {
@@ -61,6 +57,18 @@ public class WordnikClient {
         return 0;
     }
 
+    public int getFrequencyByYear(String word, int year) {
+        return getFrequencyByYear(this.wordApi, word, year);
+    }
+
+    // VisibleForTesting
+    protected static int getFrequencyByYear(WordApi wordApi, String word, int year) {
+        FrequencySummary freqSummary = wordApi.getWordFrequency("college", "false", year, year);
+        List<Object> freqObjects = freqSummary.getFrequency();
+        // freqObjects is a List<Map> [{"year" = "2012", "count" = 179}] for "Java"
+        return getFrequencyFromFreqObjects(freqObjects, year);
+    }
+
     public WordRecord getWordOfTheDay(String date) {
         WordOfTheDay word = wordsApi.getWordOfTheDay(date);
         List<Object> definitions = word.getDefinitions();
@@ -68,17 +76,15 @@ public class WordnikClient {
             Object definition = definitions.get(0);
             if (definition instanceof Map) {
                 @SuppressWarnings("unchecked")
-                Map<Object, Object> definitionAsMap = (Map<Object, Object>) definition;
+                Map<String, String> definitionAsMap = (Map<String, String>) definition;
                 return buildWordRecord(word.getWord(), definitionAsMap);
             }
         }
         return new WordRecord(word.getWord(), 0, ""); // no frequency or definition
     }
 
-    private WordRecord buildWordRecord(String word, Map<Object, Object> definition) {
-        return new WordRecord(
-                word,
-                getFrequencyByYear(word, FREQ_YEAR),
+    private WordRecord buildWordRecord(String word, Map<String, String> definition) {
+        return new WordRecord(word, getFrequencyByYear(word, FREQ_YEAR),
                 definition.get("text").toString());
     }
 }

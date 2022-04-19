@@ -35,7 +35,7 @@ public class FXMLController implements Initializable {
     private final BooleanProperty modifiedProperty = new SimpleBooleanProperty(false);
     private ChangeListener<WordRecord> wordRecordChangeListener = new WordRecordChangeListener();
 
-    private WordnikClient client;
+    private WordnikForWordui client;
 
     private class WordRecordChangeListener implements ChangeListener<WordRecord> {
         @Override
@@ -63,10 +63,10 @@ public class FXMLController implements Initializable {
         SampleData.fillSampleData(wordRecordList);
 
         try {
-            client = new WordnikClient();
-            wordRecordList.add(client.getWordOfTheDay("2022-04-15"));
+            client = new WordnikForWordui();
+            wordRecordList.add(client.getWordOfTheDay("2022-04-19"));
         } catch (IOException e) {
-            // TODO
+            throw new RuntimeException(e);
         }
 
         configureButtons();

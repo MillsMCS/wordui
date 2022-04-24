@@ -6,12 +6,12 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.*;
 import org.junit.jupiter.params.provider.*;
 
-class WordnikForWorduiTest {
-    private static WordnikForWordui client;
+class WorduiWordnikClientTest {
+    private static WorduiWordnikClient client;
 
     @BeforeAll
     public static void setup() throws IOException {
-        client = new WordnikForWordui();
+        client = new WorduiWordnikClient();
     }
 
     @ParameterizedTest

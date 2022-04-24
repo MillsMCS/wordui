@@ -8,7 +8,7 @@ import edu.mills.cs180a.wordnik.client.invoker.*;
 import edu.mills.cs180a.wordnik.client.model.*;
 import edu.mills.cs180a.wordui.model.*;
 
-public class WordnikForWordui {
+public class WorduiWordnikClient {
     private static final String FREQ_COUNT_KEY = "count";
     private static final String FREQ_YEAR_KEY = "year";
     private static final int FREQ_YEAR = 2012;
@@ -16,7 +16,7 @@ public class WordnikForWordui {
     private WordApi wordApi;
     private WordsApi wordsApi;
 
-    public WordnikForWordui() throws IOException {
+    public WorduiWordnikClient() throws IOException {
         String key = getApiKey();
         ApiClient client = new ApiClient("api_key", key);
         wordApi = client.buildClient(WordApi.class);
@@ -29,7 +29,7 @@ public class WordnikForWordui {
     }
 
     private static String getResource(String filename) throws IOException {
-        try (InputStream is = WordnikForWordui.class.getResourceAsStream(filename)) {
+        try (InputStream is = WorduiWordnikClient.class.getResourceAsStream(filename)) {
             if (is == null) {
                 throw new IOException("Unable to open file " + filename);
             }

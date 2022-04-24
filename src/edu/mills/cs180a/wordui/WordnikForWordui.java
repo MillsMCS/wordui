@@ -13,18 +13,18 @@ public class WordnikForWordui {
     private static final String FREQ_YEAR_KEY = "year";
     private static final int FREQ_YEAR = 2012;
 
-    private ApiClient client;
     private WordApi wordApi;
     private WordsApi wordsApi;
 
     public WordnikForWordui() throws IOException {
         String key = getApiKey();
-        client = new ApiClient("api_key", key);
+        ApiClient client = new ApiClient("api_key", key);
         wordApi = client.buildClient(WordApi.class);
         wordsApi = client.buildClient(WordsApi.class);
     }
 
     private static String getApiKey() throws IOException {
+        // File should be in same directory as this class.
         return getResource("api-key.txt");
     }
 
@@ -37,8 +37,10 @@ public class WordnikForWordui {
         }
     }
 
-    // VisibleForTesting
-    protected static int getFrequencyFromFreqObjects(List<Object> freqObjects, int year) {
+    public int getFrequencyByYear(String word, int year) {
+        FrequencySummary freqSummary = wordApi.getWordFrequency("college", "false", year, year);
+        List<Object> freqObjects = freqSummary.getFrequency();
+        // freqObjects is a List<Map> [{"year" = "2012", "count" = 179}] for "Java"
         if (freqObjects instanceof List) {
             List<Object> maps = (List<Object>) freqObjects;
             for (Object map : maps) {
@@ -55,18 +57,6 @@ public class WordnikForWordui {
             }
         }
         return 0;
-    }
-
-    public int getFrequencyByYear(String word, int year) {
-        return getFrequencyByYear(this.wordApi, word, year);
-    }
-
-    // VisibleForTesting
-    protected static int getFrequencyByYear(WordApi wordApi, String word, int year) {
-        FrequencySummary freqSummary = wordApi.getWordFrequency("college", "false", year, year);
-        List<Object> freqObjects = freqSummary.getFrequency();
-        // freqObjects is a List<Map> [{"year" = "2012", "count" = 179}] for "Java"
-        return getFrequencyFromFreqObjects(freqObjects, year);
     }
 
     public WordRecord getWordOfTheDay(String date) {

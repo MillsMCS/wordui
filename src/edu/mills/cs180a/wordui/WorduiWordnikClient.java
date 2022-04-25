@@ -15,20 +15,10 @@ public class WorduiWordnikClient {
 
     private WordApi wordApi;
 
-    private WorduiWordnikClient(WordApi wordApi) {
-        this.wordApi = wordApi;
-    }
-
-    public static WorduiWordnikClient getInstance() throws IOException {
+    public WorduiWordnikClient() throws IOException {
         String key = getApiKey();
         ApiClient client = new ApiClient("api_key", key);
-        WordApi wordApi = client.buildClient(WordApi.class);
-        return new WorduiWordnikClient(wordApi);
-    }
-
-    public static WorduiWordnikClient getMockInstance() throws IOException {
-        WordApi wordApi = new MockWordApi();
-        return new WorduiWordnikClient(wordApi);
+        wordApi = client.buildClient(WordApi.class);
     }
 
     private static String getApiKey() throws IOException {

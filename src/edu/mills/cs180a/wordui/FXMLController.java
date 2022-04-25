@@ -63,7 +63,7 @@ public class FXMLController implements Initializable {
         SampleData.fillSampleData(wordRecordList);
 
         try {
-            client = WorduiWordnikClient.getInstance();
+            client = new WorduiWordnikClient();
             // wordRecordList.add(client.getWordOfTheDay("2022-04-19"));
         } catch (IOException e) {
             throw new RuntimeException(e);

@@ -11,7 +11,7 @@ class WorduiWordnikClientTest {
 
     @BeforeAll
     public static void setup() throws IOException {
-        client = WorduiWordnikClient.getMockInstance();
+        client = new WorduiWordnikClient();
     }
 
     @ParameterizedTest

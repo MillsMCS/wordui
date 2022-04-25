@@ -15,15 +15,25 @@ public class WorduiWordnikClient {
 
     private WordApi wordApi;
 
-    public WorduiWordnikClient() throws IOException {
+    private WorduiWordnikClient(WordApi wordApi) {
+        this.wordApi = wordApi;
+    }
+
+    public static WorduiWordnikClient getInstance() throws IOException {
         String key = getApiKey();
         ApiClient client = new ApiClient("api_key", key);
-        wordApi = client.buildClient(WordApi.class);
+        WordApi wordApi = client.buildClient(WordApi.class);
+        return new WorduiWordnikClient(wordApi);
     }
 
     private static String getApiKey() throws IOException {
         // File should be in same directory as this class.
         return getResource("api-key.txt");
+    }
+
+    public static WorduiWordnikClient getMockInstance() throws IOException {
+        WordApi wordApi = new MockWordApi();
+        return new WorduiWordnikClient(wordApi);
     }
 
     private static String getResource(String filename) throws IOException {

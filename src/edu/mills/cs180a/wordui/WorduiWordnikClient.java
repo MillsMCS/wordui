@@ -9,8 +9,8 @@ import edu.mills.cs180a.wordnik.client.model.*;
 import edu.mills.cs180a.wordui.model.*;
 
 public class WorduiWordnikClient {
-    private static final String FREQ_COUNT_KEY = "count";
-    private static final String FREQ_YEAR_KEY = "year";
+    static final String FREQ_COUNT_KEY = "count";
+    static final String FREQ_YEAR_KEY = "year";
     private static final int FREQ_YEAR = 2012;
 
     private WordApi wordApi;

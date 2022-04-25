@@ -14,13 +14,21 @@ public class WorduiWordnikClient {
     private static final int FREQ_YEAR = 2012;
 
     private WordApi wordApi;
-    private WordsApi wordsApi;
 
-    public WorduiWordnikClient() throws IOException {
+    private WorduiWordnikClient(WordApi wordApi) {
+        this.wordApi = wordApi;
+    }
+
+    public static WorduiWordnikClient getInstance() throws IOException {
         String key = getApiKey();
         ApiClient client = new ApiClient("api_key", key);
-        wordApi = client.buildClient(WordApi.class);
-        wordsApi = client.buildClient(WordsApi.class);
+        WordApi wordApi = client.buildClient(WordApi.class);
+        return new WorduiWordnikClient(wordApi);
+    }
+
+    public static WorduiWordnikClient getMockInstance() throws IOException {
+        WordApi wordApi = new MockWordApi();
+        return new WorduiWordnikClient(wordApi);
     }
 
     private static String getApiKey() throws IOException {
@@ -38,7 +46,7 @@ public class WorduiWordnikClient {
     }
 
     public int getFrequencyByYear(String word, int year) {
-        FrequencySummary freqSummary = wordApi.getWordFrequency("college", "false", year, year);
+        FrequencySummary freqSummary = wordApi.getWordFrequency(word, "false", year, year);
         List<Object> freqObjects = freqSummary.getFrequency();
         // freqObjects is a List<Map> [{"year" = "2012", "count" = 179}] for "Java"
         if (freqObjects instanceof List) {
@@ -59,19 +67,19 @@ public class WorduiWordnikClient {
         return 0;
     }
 
-    public WordRecord getWordOfTheDay(String date) {
-        WordOfTheDay word = wordsApi.getWordOfTheDay(date);
-        List<Object> definitions = word.getDefinitions();
-        if (definitions != null && !definitions.isEmpty()) {
-            Object definition = definitions.get(0);
-            if (definition instanceof Map) {
-                @SuppressWarnings("unchecked")
-                Map<String, String> definitionAsMap = (Map<String, String>) definition;
-                return buildWordRecord(word.getWord(), definitionAsMap);
-            }
-        }
-        return new WordRecord(word.getWord(), 0, ""); // no frequency or definition
-    }
+    // public WordRecord getWordOfTheDay(String date) {
+    // WordOfTheDay word = wordsApi.getWordOfTheDay(date);
+    // List<Object> definitions = word.getDefinitions();
+    // if (definitions != null && !definitions.isEmpty()) {
+    // Object definition = definitions.get(0);
+    // if (definition instanceof Map) {
+    // @SuppressWarnings("unchecked")
+    // Map<String, String> definitionAsMap = (Map<String, String>) definition;
+    // return buildWordRecord(word.getWord(), definitionAsMap);
+    // }
+    // }
+    // return new WordRecord(word.getWord(), 0, ""); // no frequency or definition
+    // }
 
     private WordRecord buildWordRecord(String word, Map<String, String> definition) {
         return new WordRecord(word, getFrequencyByYear(word, FREQ_YEAR),

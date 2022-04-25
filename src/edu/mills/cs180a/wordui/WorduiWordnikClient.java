@@ -67,6 +67,17 @@ public class WorduiWordnikClient {
         return 0;
     }
 
+    /**
+     * Gets the Scrabble™ score for the given word.
+     *
+     * @param word the word
+     * @return the score
+     * @see {@link WordApi#getScrabbleScore(String)}
+     */
+    public long getScrabbleScore(String word) {
+        return wordApi.getScrabbleScore(word);
+    }
+
     // public WordRecord getWordOfTheDay(String date) {
     // WordOfTheDay word = wordsApi.getWordOfTheDay(date);
     // List<Object> definitions = word.getDefinitions();

@@ -8,9 +8,9 @@ public class MockWordApi implements WordApi {
     private class MockFrequencySummary extends FrequencySummary {
         // These should be returned by getFrequency() for "apple" and "orange"
         private static final List<Object> APPLE_FREQUENCIES =
-                List.of(makeMap(2000, 3845), makeMap(2001, 3883), makeMap(2020, 0));
+                List.of(makeMap(2000, 339), makeMap(2001, 464), makeMap(2020, 0));
         private static final List<Object> ORANGE_FREQUENCIES =
-                List.of(makeMap(2000, 3845), makeMap(2001, 3883));
+                List.of(makeMap(2000, 774), makeMap(2001, 941));
 
         private static Map<Object, Object> makeMap(int year, int count) {
             return Map.of(WorduiWordnikClient.FREQ_YEAR_KEY, String.valueOf(year),

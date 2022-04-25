@@ -15,8 +15,8 @@ class WorduiWordnikClientTest {
     }
 
     @ParameterizedTest
-    @CsvSource({"apple,2000,3845", "apple,2001,3883", "apple,2020,0", "orange,2000,3845",
-            "orange,2001,3883"})
+    @CsvSource({"apple,2000,339", "apple,2001,464", "apple,2020,0", "orange,2000,774",
+            "orange,2001,941"})
     void testGetFrequencyFromSummary(String word, int year, int count) {
         assertEquals(count, client.getFrequencyByYear(word, year));
     }

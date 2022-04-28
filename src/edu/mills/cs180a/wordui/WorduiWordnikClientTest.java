@@ -1,6 +1,6 @@
 package edu.mills.cs180a.wordui;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.*;
@@ -11,7 +11,7 @@ class WorduiWordnikClientTest {
 
     @BeforeAll
     public static void setup() throws IOException {
-        client = new WorduiWordnikClient();
+        client = WorduiWordnikClient.getMockInstance();
     }
 
     @ParameterizedTest

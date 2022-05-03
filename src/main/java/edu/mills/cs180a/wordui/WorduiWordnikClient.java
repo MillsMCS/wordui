@@ -29,8 +29,8 @@ public class WorduiWordnikClient {
         return new WorduiWordnikClient(wordApi, wordsApi);
     }
 
-    public static WorduiWordnikClient getMockInstance(WordApi wordApi) {
-        return new WorduiWordnikClient(wordApi, null);
+    public static WorduiWordnikClient getMockInstance(WordApi wordApi, WordsApi wordsApi) {
+        return new WorduiWordnikClient(wordApi, wordsApi);
     }
 
     private static String getApiKey() throws IOException {
